@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام مدير مشاريع الحديد المتكامل</title>
+    <style>
+        :root { --primary: #2c3e50; --accent: #d35400; --success: #27ae60; --danger: #c0392b; --info: #2980b9; --light: #ecf0f1; --white: #fff; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #dfe6e9; margin: 0; padding: 20px; color: var(--primary); }
+        .container { max-width: 1100px; margin: 0 auto; background: var(--white); padding: 25px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        
+        header { border-bottom: 4px solid var(--primary); margin-bottom: 25px; padding-bottom: 15px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
+        .project-manager { background: var(--light); padding: 10px 20px; border-radius: 8px; display: flex; gap: 10px; align-items: center; margin-top: 10px; }
+        
+        .main-layout { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+        @media (max-width: 768px) { .main-layout { grid-template-columns: 1fr; } }
+
+        .control-panel { background: #f4f7f6; padding: 20px; border-radius: 10px; border: 1px solid #bdc3c7; }
+        .input-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; margin-top: 15px; }
+        .input-group { display: flex; flex-direction: column; }
+        label { font-weight: bold; margin-bottom: 5px; font-size: 13px; color: #34495e; }
+        input, select { padding: 10px; border: 1px solid #95a5a6; border-radius: 5px; transition: 0.3s; }
+        input:focus { border-color: var(--accent); outline: none; }
+
+        .actions { margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap; }
+        button { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; color: white; transition: 0.2s; }
+        button:hover { opacity: 0.9; transform: translateY(-1px); }
+        .btn-calc { background: var(--primary); }
+        .btn-save { background: var(--success); }
+        .btn-del { background: var(--danger); }
+        .btn-new { background: var(--info); }
+
+        .result-box { margin-top: 15px; padding: 15px; background: #dff9fb; border-right: 5px solid var(--info); border-radius: 4px; display: none; }
+        
+        .tables-section { margin-top: 30px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; background: white; font-size: 14px; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
+        th { background: var(--primary); color: white; }
+        tr:nth-child(even) { background: #f9f9f9; }
+        
+        .cost-section { background: #ffeaa7; padding: 15px; border-radius: 8px; margin-top: 20px; display: flex; align-items: center; gap: 15px; font-weight: bold; }
+
+        @media print { .no-print { display: none !important; } .container { box-shadow: none; border: none; } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <div>
+            <h1 style="margin:0;">🏗️ مدير مشاريع الحديد</h1>
+            <small>حساب كميات | طلبية المواد | تقدير التكلفة</small>
+        </div>
+        <div class="project-manager no-print">
+            <label>📁 المشروع الحالي:</label>
+            <select id="project-select" onchange="loadProject()"></select>
+            <button class="btn-new" onclick="createNewProject()" style="padding: 5px 10px;">+</button>
+            <button class="btn-del" onclick="deleteProject()" style="padding: 5px 10px;">🗑️</button>
+        </div>
+    </header>
+
+    <div class="main-layout">
+        <div class="control-panel no-print">
+            <div class="input-grid" style="grid-template-columns: 1fr 1fr;">
+                <div class="input-group">
+                    <label>العنصر الإنشائي:</label>
+                    <select id="element-type" onchange="updateForm()">
+                        <option value="slab">سقف (Slab)</option>
+                        <option value="raft">أساس حصيري (Raft)</option>
+                        <option value="beam">جسر (Beam)</option>
+                        <option value="column">عمود (Column)</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>الاسم (للتميز):</label>
+                    <input type="text" id="element-name" placeholder="مثلاً: C1, B2...">
+                </div>
+            </div>
+
+            <div id="form-container" class="input-grid"></div>
+
+            <div class="actions">
+                <button class="btn-calc" onclick="calculate()">1. احسب</button>
+                <button class="btn-save" onclick="saveCalculation()">2. حفظ في المشروع</button>
+            </div>
+            
+            <div id="current-result" class="result-box"></div>
+        </div>
+
+        <div class="no-print">
+            <div style="background: var(--primary); color: white; padding: 15px; border-radius: 8px;">
+                <h3 style="margin-top:0;">💡 تعليمات سريعة</h3>
+                <ul style="padding-right: 20px; font-size: 13px; line-height: 1.6;">
+                    <li>تأكد من اختيار المشروع الصحيح من الأعلى.</li>
+                    <li>يتم حساب **تداخل الحديد (Overlap)** تلقائياً للأطوال > 12م.</li>
+                    <li>يتم حساب "الكراسي" تلقائياً للسقف والأساس عند إدخال السمك.</li>
+                    <li>بعد الانتهاء، ادخل سعر الطن في الأسفل لمعرفة التكلفة.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="tables-section">
+        <h3>📋 سجل العناصر المحفوظة</h3>
+        <table id="saved-table">
+            <thead>
+                <tr>
+                    <th>الاسم</th><th>النوع</th><th>العدد</th><th>الوزن (كجم)</th><th>توزيع الأقطار</th><th class="no-print">حذف</th>
+                </tr>
+            </thead>
+            <tbody id="saved-body"></tbody>
+        </table>
+
+        <div style="margin-top: 40px; border-top: 2px dashed #bdc3c7; padding-top: 20px;">
+            <h2 style="color: var(--accent);">📦 ملخص طلبية الحديد (Order Summary)</h2>
+            <table id="summary-table">
+                <thead>
+                    <tr>
+                        <th style="background: var(--accent);">قطر السيخ (mm)</th>
+                        <th style="background: var(--accent);">الوزن المطلوب (كجم)</th>
+                        <th style="background: var(--accent);">الوزن المطلوب (طن)</th>
+                    </tr>
+                </thead>
+                <tbody id="summary-body"></tbody>
+            </table>
+        </div>
+
+        <div class="cost-section no-print">
+            <label>💰 أدخل سعر طن الحديد (دينار/دولار):</label>
+            <input type="number" id="price-per-ton" style="width: 150px;" oninput="calculateCost()">
+            <span id="total-cost-display" style="font-size: 1.2em; margin-right: 15px;">التكلفة الكلية: 0</span>
+        </div>
+
+        <div class="actions no-print" style="justify-content: center; margin-top: 30px;">
+            <button onclick="window.print()" style="background: #34495e; font-size: 18px; padding: 15px 40px;">🖨️ طباعة التقرير والطلبية</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let projects = JSON.parse(localStorage.getItem('rebar_projects')) || {"المشروع الافتراضي": []};
+    let currentProjectName = localStorage.getItem('current_project_name') || "المشروع الافتراضي";
+    
+    if (!projects[currentProjectName]) {
+        projects[currentProjectName] = [];
+        saveProjects();
+    }
+
+    function saveProjects() {
+        localStorage.setItem('rebar_projects', JSON.stringify(projects));
+        localStorage.setItem('current_project_name', currentProjectName);
+    }
+
+    function initProjects() {
+        const sel = document.getElementById('project-select');
+        sel.innerHTML = Object.keys(projects).map(p => `<option value="${p}" ${p===currentProjectName?'selected':''}>${p}</option>`).join('');
+        renderAll();
+    }
+
+    function createNewProject() {
+        const name = prompt("أدخل اسم المشروع الجديد:");
+        if (name && !projects[name]) {
+            projects[name] = [];
+            currentProjectName = name;
+            saveProjects();
+            initProjects();
+        } else if (projects[name]) {
+            alert("هذا الاسم موجود مسبقاً!");
+        }
+    }
+
+    function deleteProject() {
+        if (Object.keys(projects).length <= 1) return alert("لا يمكن حذف المشروع الوحيد.");
+        if (confirm(`هل أنت متأكد من حذف مشروع "${currentProjectName}" وكل بياناته؟`)) {
+            delete projects[currentProjectName];
+            currentProjectName = Object.keys(projects)[0];
+            saveProjects();
+            initProjects();
+        }
+    }
+
+    function loadProject() {
+        currentProjectName = document.getElementById('project-select').value;
+        saveProjects();
+        renderAll();
+    }
+
+    // --- تحديث: إضافة حقل "سمك السقف" هنا ---
+    const forms = {
+        slab: [
+            {id: 'L', label: 'الطول (م)', val: 10}, {id: 'W', label: 'العرض (م)', val: 5},
+            {id: 'thick', label: 'سمك السقف (سم)', val: 20}, // الحقل الجديد
+            {id: 'dia', label: 'قطر الفرش والغطاء (مم)', val: 12}, {id: 'space', label: 'المسافة (سم)', val: 20},
+            {id: 'hook', label: 'طول الهوك (سم)', val: 10}, {id: 'cover', label: 'الغطاء (مم)', val: 20},
+            {id: 'waste', label: 'الهالك (%)', val: 5}, {id: 'qty', label: 'عدد الأسقف', val: 1}
+        ],
+        raft: [
+            {id: 'L', label: 'الطول (م)', val: 20}, {id: 'W', label: 'العرض (م)', val: 15},
+            {id: 'thick', label: 'السمك (سم)', val: 80}, {id: 'dia', label: 'قطر الشبكة (مم)', val: 16},
+            {id: 'space', label: 'المسافة (سم)', val: 15}, {id: 'hook', label: 'طول الهوك (سم)', val: 10},
+            {id: 'cover', label: 'الغطاء (مم)', val: 75}, {id: 'waste', label: 'الهالك (%)', val: 5},
+            {id: 'qty', label: 'العدد', val: 1}
+        ],
+        beam: [
+            {id: 'L', label: 'طول الجسر (م)', val: 6}, {id: 'W', label: 'العرض (سم)', val: 30},
+            {id: 'H', label: 'الارتفاع (سم)', val: 60}, {id: 'count', label: 'الأسياخ الطولية', val: 6},
+            {id: 'dia', label: 'قطر الطولي (مم)', val: 16}, {id: 's_dia', label: 'قطر الكانة (مم)', val: 10},
+            {id: 's_space', label: 'مسافة الكانات (سم)', val: 15}, {id: 'qty', label: 'العدد', val: 1}
+        ],
+        column: [
+            {id: 'H', label: 'الارتفاع (م)', val: 4}, {id: 'W', label: 'العرض (سم)', val: 30},
+            {id: 'D', label: 'العمق (سم)', val: 60}, {id: 'count', label: 'الأسياخ الطولية', val: 8},
+            {id: 'dia', label: 'قطر الطولي (مم)', val: 16}, {id: 's_space', label: 'مسافة الكانة (سم)', val: 15},
+            {id: 'qty', label: 'العدد', val: 1}
+        ]
+    };
+
+    function updateForm() {
+        const type = document.getElementById('element-type').value;
+        document.getElementById('form-container').innerHTML = forms[type].map(f => `
+            <div class="input-group">
+                <label>${f.label}</label>
+                <input type="number" id="inp_${f.id}" value="${f.val}">
+            </div>
+        `).join('');
+        document.getElementById('current-result').style.display = 'none';
+    }
+
+    function getV(id) { const el = document.getElementById('inp_' + id); return el ? (parseFloat(el.value) || 0) : 0; }
+
+    function addOverlap(length, dia) {
+        if (length <= 12) return length;
+        let laps = Math.floor((length - 0.01) / 12);
+        let overlapLength = (60 * dia) / 1000;
+        return length + (laps * overlapLength);
+    }
+
+    function calculate() {
+        const type = document.getElementById('element-type').value;
+        let diaMap = {}; 
+        let totalQty = getV('qty') || 1;
+        let totalWeight = 0;
+
+        const addWeight = (d, w) => {
+            const diaStr = d.toString();
+            if(!diaMap[diaStr]) diaMap[diaStr] = 0;
+            diaMap[diaStr] += w;
+            totalWeight += w;
+        };
+
+        if (type === 'slab' || type === 'raft') {
+            let l = getV('L'), w = getV('W'), dia = getV('dia'), sp = getV('space')/100;
+            let cov = getV('cover')/1000, wst = getV('waste')/100;
+            let thick = getV('thick')/100; // تم استدعاء السمك هنا
+            let hook = getV('hook') / 100; 
+            
+            let realL = addOverlap(l, dia);
+            let realW = addOverlap(w, dia);
+
+            let lenX = (realL - 2*cov) + 2*hook; let numX = Math.floor(w / sp) + 1;
+            let lenY = (realW - 2*cov) + 2*hook; let numY = Math.floor(l / sp) + 1;
+            
+            // حساب طبقتين (فرش وغطاء مرتين)
+            let netWeight = ((lenX * numX) + (lenY * numY)) * 2 * (Math.pow(dia, 2) / 162);
+            addWeight(dia, netWeight * (1 + wst));
+
+            // حساب الكراسي تلقائياً للسقف والأساس
+            let chairH = thick - (2*cov) - (4*dia/1000); 
+            if (chairH > 0) {
+                let chairLen = (chairH * 2) + 0.35; 
+                let chairCount = Math.ceil((l * w)); 
+                let chairTotalLen = chairCount * chairLen;
+                let chairW = chairTotalLen * (Math.pow(12, 2) / 162); 
+                addWeight(12, chairW * (1 + wst));
+            }
+        } 
+        else {
+            let l = getV(type==='beam'?'L':'H'), count = getV('count'), dia = getV('dia');
+            let realL = addOverlap(l, dia);
+            let mainW = (count * realL) * (Math.pow(dia, 2) / 162);
+            addWeight(dia, mainW);
+
+            let w = getV('W')/100, d = getV(type==='beam'?'H':'D')/100;
+            let s_sp = getV('s_space')/100 || 0.2;
+            let s_dia = type==='beam' ? getV('s_dia') : 10; 
+            
+            let stirLen = 2*(w-0.08) + 2*(d-0.08) + 0.15; 
+            let stirCount = Math.floor(l / s_sp) + 1;
+            let stirW = (stirCount * stirLen) * (Math.pow(s_dia, 2) / 162);
+            addWeight(s_dia, stirW);
+        }
+
+        for (let d in diaMap) diaMap[d] *= totalQty;
+        totalWeight *= totalQty;
+
+        const resDiv = document.getElementById('current-result');
+        resDiv.style.display = 'block';
+        resDiv.innerHTML = `<strong>الوزن الإجمالي:</strong> ${totalWeight.toFixed(2)} كجم<br><small>(شامل التداخل والهالك والكراسي)</small>`;
+
+        return { totalWeight, diaMap, totalQty };
+    }
+
+    function saveCalculation() {
+        const calc = calculate();
+        const name = document.getElementById('element-name').value || "عنصر بدون اسم";
+        const typeText = document.getElementById('element-type').options[document.getElementById('element-type').selectedIndex].text;
+        projects[currentProjectName].push({
+            name, type: typeText, qty: calc.totalQty, weight: calc.totalWeight, breakdown: calc.diaMap 
+        });
+        saveProjects(); renderAll();
+        document.getElementById('element-name').value = "";
+    }
+
+    function renderAll() {
+        const list = projects[currentProjectName];
+        const tbody = document.getElementById('saved-body');
+        const summaryBody = document.getElementById('summary-body');
+        
+        tbody.innerHTML = list.map((item, index) => {
+            let details = Object.entries(item.breakdown).map(([d, w]) => `<span style="font-size:0.85em; background:#eee; padding:2px 5px; border-radius:3px; margin:1px;">Ø${d}: ${Math.round(w)}kg</span>`).join(' ');
+            return `<tr><td>${item.name}</td><td>${item.type}</td><td>${item.qty}</td><td>${item.weight.toFixed(1)}</td><td>${details}</td><td class="no-print"><button class="btn-del" onclick="deleteItem(${index})">×</button></td></tr>`;
+        }).join('');
+
+        let totalSummary = {};
+        list.forEach(item => {
+            for (let [dia, w] of Object.entries(item.breakdown)) totalSummary[dia] = (totalSummary[dia] || 0) + w;
+        });
+
+        summaryBody.innerHTML = Object.entries(totalSummary).sort((a,b) => Number(a[0]) - Number(b[0])).map(([dia, totalW]) => `
+            <tr><td><strong>${dia} مم</strong></td><td>${totalW.toFixed(2)}</td><td><strong>${(totalW/1000).toFixed(3)} طن</strong></td></tr>
+        `).join('');
+
+        calculateCost(); 
+    }
+
+    function calculateCost() {
+        const price = parseFloat(document.getElementById('price-per-ton').value) || 0;
+        const list = projects[currentProjectName];
+        let totalW_kg = list.reduce((sum, item) => sum + item.weight, 0);
+        let cost = (totalW_kg / 1000) * price;
+        document.getElementById('total-cost-display').innerText = `التكلفة التقديرية: ${cost.toLocaleString()} ${price > 0 ? '' : '(أدخل السعر)'}`;
+    }
+
+    function deleteItem(index) { projects[currentProjectName].splice(index, 1); saveProjects(); renderAll(); }
+
+    initProjects();
+    updateForm();
+</script>
+</body>
+</html>

@@ -2,45 +2,68 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>نظام مدير مشاريع الحديد المتكامل</title>
     <style>
-        :root { --primary: #2c3e50; --accent: #d35400; --success: #27ae60; --danger: #c0392b; --info: #2980b9; --light: #ecf0f1; --white: #fff; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #dfe6e9; margin: 0; padding: 20px; color: var(--primary); }
-        .container { max-width: 1100px; margin: 0 auto; background: var(--white); padding: 25px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        :root { --primary: #2c3e50; --accent: #d35400; --success: #27ae60; --danger: #c0392b; --info: #2980b9; --warning: #f39c12; --light: #ecf0f1; --white: #fff; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #dfe6e9; margin: 0; padding: 10px; color: var(--primary); }
+        .container { max-width: 1100px; margin: 0 auto; background: var(--white); padding: 15px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.08); }
         
-        header { border-bottom: 4px solid var(--primary); margin-bottom: 25px; padding-bottom: 15px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
-        .project-manager { background: var(--light); padding: 10px 20px; border-radius: 8px; display: flex; gap: 10px; align-items: center; margin-top: 10px; }
-        
-        .main-layout { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
-        @media (max-width: 768px) { .main-layout { grid-template-columns: 1fr; } }
+        header { border-bottom: 4px solid var(--primary); margin-bottom: 20px; padding-bottom: 15px; display: flex; flex-direction: column; gap: 15px; align-items: center; text-align: center; }
+        @media (min-width: 768px) {
+            header { flex-direction: row; justify-content: space-between; text-align: right; }
+        }
 
-        .control-panel { background: #f4f7f6; padding: 20px; border-radius: 10px; border: 1px solid #bdc3c7; }
-        .input-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; margin-top: 15px; }
+        .project-manager { background: var(--light); padding: 10px; border-radius: 8px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: center; width: 100%; box-sizing: border-box; }
+        @media (min-width: 768px) { .project-manager { width: auto; } }
+
+        .project-manager select { flex-grow: 1; max-width: 200px; }
+
+        .main-layout { display: grid; grid-template-columns: 1fr; gap: 20px; }
+        @media (min-width: 900px) { .main-layout { grid-template-columns: 2fr 1fr; } }
+
+        .control-panel { background: #f4f7f6; padding: 15px; border-radius: 10px; border: 1px solid #bdc3c7; }
+        
+        .input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 15px; }
+        @media (max-width: 400px) { .input-grid { grid-template-columns: 1fr; } }
+
         .input-group { display: flex; flex-direction: column; }
         label { font-weight: bold; margin-bottom: 5px; font-size: 13px; color: #34495e; }
-        input, select { padding: 10px; border: 1px solid #95a5a6; border-radius: 5px; transition: 0.3s; }
+        input, select { padding: 10px; border: 1px solid #95a5a6; border-radius: 6px; transition: 0.3s; font-size: 16px; /* Font size 16px prevents zoom on iOS */ }
         input:focus { border-color: var(--accent); outline: none; }
 
         .actions { margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap; }
-        button { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; color: white; transition: 0.2s; }
+        button { flex: 1; padding: 12px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; color: white; transition: 0.2s; white-space: nowrap; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 5px; }
         button:hover { opacity: 0.9; transform: translateY(-1px); }
+        
         .btn-calc { background: var(--primary); }
         .btn-save { background: var(--success); }
-        .btn-del { background: var(--danger); }
+        .btn-update { background: var(--warning); color: #333; } /* زر التحديث */
+        .btn-del { background: var(--danger); min-width: 40px; }
+        .btn-edit { background: var(--warning); min-width: 40px; color: #333; }
         .btn-new { background: var(--info); }
 
         .result-box { margin-top: 15px; padding: 15px; background: #dff9fb; border-right: 5px solid var(--info); border-radius: 4px; display: none; }
         
         .tables-section { margin-top: 30px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; background: white; font-size: 14px; }
-        th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
-        th { background: var(--primary); color: white; }
+        
+        /* جعل الجدول قابل للتمرير في الهاتف */
+        .table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; margin-bottom: 20px; border-radius: 8px; border: 1px solid #ddd; }
+        
+        table { width: 100%; border-collapse: collapse; background: white; font-size: 14px; min-width: 600px; /* ضمان عرض أدنى للجدول */ }
+        th, td { border: 1px solid #ddd; padding: 10px 8px; text-align: center; }
+        th { background: var(--primary); color: white; white-space: nowrap; }
         tr:nth-child(even) { background: #f9f9f9; }
         
-        .cost-section { background: #ffeaa7; padding: 15px; border-radius: 8px; margin-top: 20px; display: flex; align-items: center; gap: 15px; font-weight: bold; }
+        .cost-section { background: #ffeaa7; padding: 15px; border-radius: 8px; margin-top: 20px; display: flex; flex-wrap: wrap; align-items: center; gap: 15px; font-weight: bold; }
 
-        @media print { .no-print { display: none !important; } .container { box-shadow: none; border: none; } }
+        @media print { 
+            .no-print { display: none !important; } 
+            .container { box-shadow: none; border: none; padding: 0; width: 100%; max-width: 100%; }
+            .table-wrapper { overflow: visible; border: none; }
+            table { min-width: auto; }
+            body { background: white; }
+        }
     </style>
 </head>
 <body>
@@ -48,19 +71,20 @@
 <div class="container">
     <header>
         <div>
-            <h1 style="margin:0;">🏗️ مدير مشاريع الحديد</h1>
-            <small>حساب كميات | طلبية المواد | تقدير التكلفة</small>
+            <h1 style="margin:0; font-size: 1.5rem;">🏗️ مدير مشاريع الحديد</h1>
+            <small style="color: #7f8c8d;">حساب كميات | طلبية المواد | تقدير التكلفة</small>
         </div>
         <div class="project-manager no-print">
-            <label>📁 المشروع الحالي:</label>
             <select id="project-select" onchange="loadProject()"></select>
-            <button class="btn-new" onclick="createNewProject()" style="padding: 5px 10px;">+</button>
-            <button class="btn-del" onclick="deleteProject()" style="padding: 5px 10px;">🗑️</button>
+            <button class="btn-new" onclick="createNewProject()" title="مشروع جديد">+</button>
+            <button class="btn-del" onclick="deleteProject()" title="حذف المشروع">🗑️</button>
         </div>
     </header>
 
     <div class="main-layout">
         <div class="control-panel no-print">
+            <input type="hidden" id="edit-index" value="-1">
+
             <div class="input-grid" style="grid-template-columns: 1fr 1fr;">
                 <div class="input-group">
                     <label>العنصر الإنشائي:</label>
@@ -81,7 +105,8 @@
 
             <div class="actions">
                 <button class="btn-calc" onclick="calculate()">1. احسب</button>
-                <button class="btn-save" onclick="saveCalculation()">2. حفظ في المشروع</button>
+                <button id="btn-save-action" class="btn-save" onclick="saveCalculation()">2. حفظ في المشروع</button>
+                <button id="btn-cancel-edit" class="btn-del" onclick="cancelEdit()" style="display:none; flex: 0 0 auto;">إلغاء</button>
             </div>
             
             <div id="current-result" class="result-box"></div>
@@ -89,12 +114,12 @@
 
         <div class="no-print">
             <div style="background: var(--primary); color: white; padding: 15px; border-radius: 8px;">
-                <h3 style="margin-top:0;">💡 تعليمات سريعة</h3>
-                <ul style="padding-right: 20px; font-size: 13px; line-height: 1.6;">
-                    <li>تأكد من اختيار المشروع الصحيح من الأعلى.</li>
-                    <li>يتم حساب **تداخل الحديد (Overlap)** تلقائياً للأطوال > 12م.</li>
-                    <li>يتم حساب "الكراسي" تلقائياً للسقف والأساس عند إدخال السمك.</li>
-                    <li>بعد الانتهاء، ادخل سعر الطن في الأسفل لمعرفة التكلفة.</li>
+                <h3 style="margin-top:0; font-size: 1.1rem;">💡 تعليمات</h3>
+                <ul style="padding-right: 20px; font-size: 13px; line-height: 1.8; margin-bottom: 0;">
+                    <li>تأكد من اختيار المشروع الصحيح.</li>
+                    <li>يتم حساب <strong>Overlap</strong> تلقائياً للأطوال > 12م.</li>
+                    <li>يتم حساب <strong>الكراسي</strong> تلقائياً عند إدخال سمك السقف/الأساس.</li>
+                    <li>استخدم زر <strong>"✏️"</strong> لتعديل أي عنصر مدخل سابقاً.</li>
                 </ul>
             </div>
         </div>
@@ -102,53 +127,65 @@
 
     <div class="tables-section">
         <h3>📋 سجل العناصر المحفوظة</h3>
-        <table id="saved-table">
-            <thead>
-                <tr>
-                    <th>الاسم</th><th>النوع</th><th>العدد</th><th>الوزن (كجم)</th><th>توزيع الأقطار</th><th class="no-print">حذف</th>
-                </tr>
-            </thead>
-            <tbody id="saved-body"></tbody>
-        </table>
-
-        <div style="margin-top: 40px; border-top: 2px dashed #bdc3c7; padding-top: 20px;">
-            <h2 style="color: var(--accent);">📦 ملخص طلبية الحديد (Order Summary)</h2>
-            <table id="summary-table">
+        <div class="table-wrapper">
+            <table id="saved-table">
                 <thead>
                     <tr>
-                        <th style="background: var(--accent);">قطر السيخ (mm)</th>
-                        <th style="background: var(--accent);">الوزن المطلوب (كجم)</th>
-                        <th style="background: var(--accent);">الوزن المطلوب (طن)</th>
+                        <th>الاسم</th>
+                        <th>النوع</th>
+                        <th>العدد</th>
+                        <th>الوزن (كجم)</th>
+                        <th>تفاصيل الأقطار</th>
+                        <th class="no-print" style="width: 100px;">إجراءات</th>
                     </tr>
                 </thead>
-                <tbody id="summary-body"></tbody>
+                <tbody id="saved-body"></tbody>
             </table>
         </div>
 
+        <div style="margin-top: 40px; border-top: 2px dashed #bdc3c7; padding-top: 20px;">
+            <h2 style="color: var(--accent); font-size: 1.3rem;">📦 ملخص طلبية الحديد (Order Summary)</h2>
+            <div class="table-wrapper">
+                <table id="summary-table">
+                    <thead>
+                        <tr>
+                            <th style="background: var(--accent);">قطر السيخ (mm)</th>
+                            <th style="background: var(--accent);">الوزن المطلوب (كجم)</th>
+                            <th style="background: var(--accent);">الوزن المطلوب (طن)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="summary-body"></tbody>
+                </table>
+            </div>
+        </div>
+
         <div class="cost-section no-print">
-            <label>💰 أدخل سعر طن الحديد (دينار/دولار):</label>
-            <input type="number" id="price-per-ton" style="width: 150px;" oninput="calculateCost()">
-            <span id="total-cost-display" style="font-size: 1.2em; margin-right: 15px;">التكلفة الكلية: 0</span>
+            <div style="flex: 1; min-width: 200px;">
+                <label>💰 أدخل سعر طن الحديد:</label>
+                <input type="number" id="price-per-ton" style="width: 100px; margin-right: 10px;" oninput="calculateCost()">
+            </div>
+            <span id="total-cost-display" style="font-size: 1.1em;">التكلفة الكلية: 0</span>
         </div>
 
         <div class="actions no-print" style="justify-content: center; margin-top: 30px;">
-            <button onclick="window.print()" style="background: #34495e; font-size: 18px; padding: 15px 40px;">🖨️ طباعة التقرير والطلبية</button>
+            <button onclick="window.print()" style="background: #34495e; padding: 15px 30px; width: auto; flex: none;">🖨️ طباعة التقرير</button>
         </div>
     </div>
 </div>
 
 <script>
-    let projects = JSON.parse(localStorage.getItem('rebar_projects')) || {"المشروع الافتراضي": []};
-    let currentProjectName = localStorage.getItem('current_project_name') || "المشروع الافتراضي";
+    let projects = JSON.parse(localStorage.getItem('rebar_projects_v2')) || {"المشروع الافتراضي": []};
+    let currentProjectName = localStorage.getItem('current_project_name_v2') || "المشروع الافتراضي";
     
+    // تأكد من وجود مفتاح المشروع
     if (!projects[currentProjectName]) {
         projects[currentProjectName] = [];
         saveProjects();
     }
 
     function saveProjects() {
-        localStorage.setItem('rebar_projects', JSON.stringify(projects));
-        localStorage.setItem('current_project_name', currentProjectName);
+        localStorage.setItem('rebar_projects_v2', JSON.stringify(projects));
+        localStorage.setItem('current_project_name_v2', currentProjectName);
     }
 
     function initProjects() {
@@ -183,14 +220,14 @@
         currentProjectName = document.getElementById('project-select').value;
         saveProjects();
         renderAll();
+        cancelEdit(); // إلغاء أي عملية تعديل عند تغيير المشروع
     }
 
-    // --- تحديث: إضافة حقل "سمك السقف" هنا ---
     const forms = {
         slab: [
             {id: 'L', label: 'الطول (م)', val: 10}, {id: 'W', label: 'العرض (م)', val: 5},
-            {id: 'thick', label: 'سمك السقف (سم)', val: 20}, // الحقل الجديد
-            {id: 'dia', label: 'قطر الفرش والغطاء (مم)', val: 12}, {id: 'space', label: 'المسافة (سم)', val: 20},
+            {id: 'thick', label: 'سمك السقف (سم)', val: 20},
+            {id: 'dia', label: 'قطر السيخ (مم)', val: 12}, {id: 'space', label: 'المسافة (سم)', val: 20},
             {id: 'hook', label: 'طول الهوك (سم)', val: 10}, {id: 'cover', label: 'الغطاء (مم)', val: 20},
             {id: 'waste', label: 'الهالك (%)', val: 5}, {id: 'qty', label: 'عدد الأسقف', val: 1}
         ],
@@ -217,10 +254,11 @@
 
     function updateForm() {
         const type = document.getElementById('element-type').value;
-        document.getElementById('form-container').innerHTML = forms[type].map(f => `
+        const container = document.getElementById('form-container');
+        container.innerHTML = forms[type].map(f => `
             <div class="input-group">
                 <label>${f.label}</label>
-                <input type="number" id="inp_${f.id}" value="${f.val}">
+                <input type="number" id="inp_${f.id}" value="${f.val}" step="0.01">
             </div>
         `).join('');
         document.getElementById('current-result').style.display = 'none';
@@ -251,7 +289,7 @@
         if (type === 'slab' || type === 'raft') {
             let l = getV('L'), w = getV('W'), dia = getV('dia'), sp = getV('space')/100;
             let cov = getV('cover')/1000, wst = getV('waste')/100;
-            let thick = getV('thick')/100; // تم استدعاء السمك هنا
+            let thick = getV('thick')/100;
             let hook = getV('hook') / 100; 
             
             let realL = addOverlap(l, dia);
@@ -260,11 +298,10 @@
             let lenX = (realL - 2*cov) + 2*hook; let numX = Math.floor(w / sp) + 1;
             let lenY = (realW - 2*cov) + 2*hook; let numY = Math.floor(l / sp) + 1;
             
-            // حساب طبقتين (فرش وغطاء مرتين)
             let netWeight = ((lenX * numX) + (lenY * numY)) * 2 * (Math.pow(dia, 2) / 162);
             addWeight(dia, netWeight * (1 + wst));
 
-            // حساب الكراسي تلقائياً للسقف والأساس
+            // الكراسي
             let chairH = thick - (2*cov) - (4*dia/1000); 
             if (chairH > 0) {
                 let chairLen = (chairH * 2) + 0.35; 
@@ -295,7 +332,7 @@
 
         const resDiv = document.getElementById('current-result');
         resDiv.style.display = 'block';
-        resDiv.innerHTML = `<strong>الوزن الإجمالي:</strong> ${totalWeight.toFixed(2)} كجم<br><small>(شامل التداخل والهالك والكراسي)</small>`;
+        resDiv.innerHTML = `<strong>الوزن الإجمالي:</strong> ${totalWeight.toFixed(2)} كجم<br><small>(شامل التداخل والهالك والكراسي إن وجد)</small>`;
 
         return { totalWeight, diaMap, totalQty };
     }
@@ -303,12 +340,87 @@
     function saveCalculation() {
         const calc = calculate();
         const name = document.getElementById('element-name').value || "عنصر بدون اسم";
-        const typeText = document.getElementById('element-type').options[document.getElementById('element-type').selectedIndex].text;
-        projects[currentProjectName].push({
-            name, type: typeText, qty: calc.totalQty, weight: calc.totalWeight, breakdown: calc.diaMap 
+        const typeSelect = document.getElementById('element-type');
+        const typeValue = typeSelect.value;
+        const typeText = typeSelect.options[typeSelect.selectedIndex].text;
+        
+        // حفظ جميع القيم المدخلة لاسترجاعها لاحقاً
+        let inputValues = {};
+        forms[typeValue].forEach(f => {
+            inputValues[f.id] = getV(f.id);
         });
-        saveProjects(); renderAll();
+
+        const itemData = {
+            name, 
+            type: typeText, 
+            typeValue: typeValue, // هام للتعديل
+            qty: calc.totalQty, 
+            weight: calc.totalWeight, 
+            breakdown: calc.diaMap,
+            inputs: inputValues // هام للتعديل
+        };
+
+        const editIndex = parseInt(document.getElementById('edit-index').value);
+
+        if (editIndex > -1) {
+            // تحديث عنصر موجود
+            projects[currentProjectName][editIndex] = itemData;
+            cancelEdit();
+        } else {
+            // إضافة عنصر جديد
+            projects[currentProjectName].push(itemData);
+            document.getElementById('element-name').value = "";
+        }
+
+        saveProjects();
+        renderAll();
+    }
+
+    // دالة بدء التعديل
+    function editItem(index) {
+        const item = projects[currentProjectName][index];
+        if (!item) return;
+
+        // تعيين وضع التعديل
+        document.getElementById('edit-index').value = index;
+        
+        // تعبئة البيانات الأساسية
+        document.getElementById('element-name').value = item.name;
+        document.getElementById('element-type').value = item.typeValue || 'slab'; // fallback
+        
+        // بناء النموذج
+        updateForm();
+
+        // تعبئة قيم الحقول من البيانات المحفوظة
+        if (item.inputs) {
+            for (let [key, val] of Object.entries(item.inputs)) {
+                const el = document.getElementById('inp_' + key);
+                if (el) el.value = val;
+            }
+        }
+
+        // تغيير حالة الأزرار
+        const saveBtn = document.getElementById('btn-save-action');
+        saveBtn.innerText = "💾 تحديث البيانات";
+        saveBtn.className = "btn-update"; // لون برتقالي
+        document.getElementById('btn-cancel-edit').style.display = 'flex';
+        
+        // الانتقال للأعلى
+        document.querySelector('.control-panel').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // دالة إلغاء التعديل
+    function cancelEdit() {
+        document.getElementById('edit-index').value = "-1";
         document.getElementById('element-name').value = "";
+        document.getElementById('btn-cancel-edit').style.display = 'none';
+        
+        const saveBtn = document.getElementById('btn-save-action');
+        saveBtn.innerText = "2. حفظ في المشروع";
+        saveBtn.className = "btn-save";
+        
+        document.getElementById('current-result').style.display = 'none';
+        updateForm(); // إعادة تعيين النموذج للقيم الافتراضية
     }
 
     function renderAll() {
@@ -317,18 +429,41 @@
         const summaryBody = document.getElementById('summary-body');
         
         tbody.innerHTML = list.map((item, index) => {
-            let details = Object.entries(item.breakdown).map(([d, w]) => `<span style="font-size:0.85em; background:#eee; padding:2px 5px; border-radius:3px; margin:1px;">Ø${d}: ${Math.round(w)}kg</span>`).join(' ');
-            return `<tr><td>${item.name}</td><td>${item.type}</td><td>${item.qty}</td><td>${item.weight.toFixed(1)}</td><td>${details}</td><td class="no-print"><button class="btn-del" onclick="deleteItem(${index})">×</button></td></tr>`;
+            let details = Object.entries(item.breakdown).map(([d, w]) => 
+                `<span style="display:inline-block; font-size:0.85em; background:#eee; padding:2px 6px; border-radius:4px; margin:2px;">Ø${d}: ${Math.round(w)}</span>`
+            ).join(' ');
+            
+            return `
+                <tr>
+                    <td><strong>${item.name}</strong></td>
+                    <td>${item.type}</td>
+                    <td>${item.qty}</td>
+                    <td>${item.weight.toFixed(1)}</td>
+                    <td>${details}</td>
+                    <td class="no-print">
+                        <div style="display:flex; gap:5px; justify-content:center;">
+                            <button class="btn-edit" onclick="editItem(${index})" title="تعديل">✏️</button>
+                            <button class="btn-del" onclick="deleteItem(${index})" title="حذف">×</button>
+                        </div>
+                    </td>
+                </tr>`;
         }).join('');
 
+        // حساب الملخص
         let totalSummary = {};
         list.forEach(item => {
             for (let [dia, w] of Object.entries(item.breakdown)) totalSummary[dia] = (totalSummary[dia] || 0) + w;
         });
 
-        summaryBody.innerHTML = Object.entries(totalSummary).sort((a,b) => Number(a[0]) - Number(b[0])).map(([dia, totalW]) => `
-            <tr><td><strong>${dia} مم</strong></td><td>${totalW.toFixed(2)}</td><td><strong>${(totalW/1000).toFixed(3)} طن</strong></td></tr>
-        `).join('');
+        summaryBody.innerHTML = Object.entries(totalSummary)
+            .sort((a,b) => Number(a[0]) - Number(b[0]))
+            .map(([dia, totalW]) => `
+                <tr>
+                    <td><strong>${dia} مم</strong></td>
+                    <td>${totalW.toFixed(2)}</td>
+                    <td><strong>${(totalW/1000).toFixed(3)} طن</strong></td>
+                </tr>
+            `).join('');
 
         calculateCost(); 
     }
@@ -338,10 +473,20 @@
         const list = projects[currentProjectName];
         let totalW_kg = list.reduce((sum, item) => sum + item.weight, 0);
         let cost = (totalW_kg / 1000) * price;
-        document.getElementById('total-cost-display').innerText = `التكلفة التقديرية: ${cost.toLocaleString()} ${price > 0 ? '' : '(أدخل السعر)'}`;
+        document.getElementById('total-cost-display').innerText = `التكلفة الكلية: ${cost.toLocaleString(undefined, {maximumFractionDigits: 0})} ${price > 0 ? '' : ''}`;
     }
 
-    function deleteItem(index) { projects[currentProjectName].splice(index, 1); saveProjects(); renderAll(); }
+    function deleteItem(index) { 
+        if(confirm("هل أنت متأكد من حذف هذا العنصر؟")) {
+            projects[currentProjectName].splice(index, 1); 
+            saveProjects(); 
+            renderAll(); 
+            // إذا كنا نعدل نفس العنصر المحذوف، نلغي التعديل
+            if (parseInt(document.getElementById('edit-index').value) == index) {
+                cancelEdit();
+            }
+        }
+    }
 
     initProjects();
     updateForm();

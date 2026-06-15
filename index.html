@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>🏗️ نظام ProTrack المتكامل لحساب حديد التسليح</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <title>🏗️ نظام ProTrack المتكامل لإدارة حديد التسليح</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght=400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     
     <style>
@@ -45,7 +45,7 @@
             transition: background 0.5s ease, color 0.5s ease;
         }
         
-        /* 🌙 وضع الإضاءة المحسن بالكامل (Light Mode) من الكود القديم */
+        /* 🌙 وضع الإضاءة المحسن بالكامل (Light Mode) */
         body.light-mode {
             background: #f0f2f5;
             color: #111;
@@ -81,20 +81,19 @@
             border-color: #bdc1c6;
         }
         
-        /* تنسيق التبويبات المنسدلة في الوضع النهاري لتكون نظيفة ومنفصلة بدون خطوط حواف */
-        body.light-mode .accordion-item {
+        body.light-mode .accordion-item, body.light-mode .sub-accordion-item {
             background: #ffffff;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
         }
-        body.light-mode .accordion-header {
+        body.light-mode .accordion-header, body.light-mode .sub-accordion-header {
             background: #ffffff;
             color: #111111;
         }
-        body.light-mode .accordion-item.active .accordion-header {
+        body.light-mode .accordion-item.active .accordion-header, body.light-mode .sub-accordion-item.active .sub-accordion-header {
             background: #f8fafc;
             color: #1a73e8;
         }
-        body.light-mode .accordion-content {
+        body.light-mode .accordion-content, body.light-mode .sub-accordion-content {
             background: #ffffff;
             border-top: 1px dashed #e8eaed;
         }
@@ -112,11 +111,6 @@
             color: #202124;
             border-color: #e8eaed;
         }
-        body.light-mode .cost-section {
-            background: #fff9e6;
-            border-color: #ffe0b2;
-            color: #333;
-        }
         body.light-mode label {
             color: #4a5568;
         }
@@ -124,8 +118,13 @@
             background: #e0f2fe;
             color: #111;
         }
+        body.light-mode .waste-alert-box {
+            background: #fff3cd;
+            color: #856404;
+            border-right-color: #ffeeba;
+        }
         
-        /* ⚙️ زر الترس العلوي المتطابق */
+        /* ⚙️ زر الترس العلوي */
         .settings-toggle {
             background: rgba(40, 44, 52, 0.9);
             color: #e0e0e0;
@@ -153,7 +152,7 @@
             transform: rotate(45deg);
         }
 
-        /* 📦 صندوق الكونتينر الرئيسي للتطبيق */
+        /* 📦 صندوق الكونتينر الرئيسي والتنسيقات */
         .container {
             background: rgba(40, 44, 52, 0.95);
             border: 1px solid rgba(255, 255, 255, 0.05);
@@ -168,7 +167,6 @@
             box-sizing: border-box;
         }
 
-        /* واجهة إدارة المشاريع الرئيسية */
         #projects-dashboard-view { display: block; width: 100%; }
         .dashboard-header { display: flex; flex-direction: column; align-items: center; text-align: center; margin-bottom: 25px; position: relative; }
         
@@ -192,7 +190,6 @@
         h2 { font-size: 1.25rem; margin-top: 0; }
         h3 { font-size: 1.05rem; margin-top: 0; }
 
-        /* الأزرار الاحترافية */
         button {
             background: linear-gradient(135deg, #00b09b, #96c93d);
             color: #fff;
@@ -262,7 +259,6 @@
         body.light-mode .project-card .proj-title { color: #202124; }
         .project-card .proj-actions { display: flex; gap: 6px; }
         
-        /* أزرار الإجراءات الصغيرة داخل الكروت */
         .action-btn {
             padding: 5px 10px !important;
             font-size: 12px !important;
@@ -278,7 +274,7 @@
         .btn-add-project-container { display: flex; justify-content: center; margin-top: 20px; }
         .btn-add-project { background: linear-gradient(135deg, #00b09b, #96c93d); color: white; padding: 12px 35px; border-radius: 10px; font-weight: bold; font-size: 15px; width: auto; flex: none; box-shadow: 0 4px 12px rgba(0, 255, 180, 0.3); }
 
-        /* 💎 التبويبات المنسدلة النظيفة والمنفصلة وبدون حواف - مطابقة للصورة والمحاذاة اليمينية */
+        /* 💎 التبويبات المنسدلة النظيفة والمنفصلة وبدون حواف */
         #single-project-view { display: none; width: 100%; }
         .project-inner-header { border-bottom: 2px dashed #444; margin-bottom: 25px; padding-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
         
@@ -308,7 +304,6 @@
         }
         .accordion-header:hover { background: #343a40; }
         
-        /* أيقونة السهم الجانبي المستقرة في اليسار بدقة */
         .accordion-header::before { 
             content: "\f107"; 
             font-family: "Font Awesome 6 Free";
@@ -334,6 +329,59 @@
         }
         .accordion-item.active .accordion-content { display: block; }
 
+        /* القوائم المنسدلة الفرعية داخل ملخص الطلبيات */
+        .sub-accordion-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 10px;
+        }
+        .sub-accordion-item {
+            border: none;
+            border-radius: 10px;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            transition: all 0.3s ease;
+        }
+        .sub-accordion-header {
+            background: rgba(40, 44, 52, 0.3);
+            padding: 14px 20px;
+            font-size: 13px;
+            font-weight: bold;
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+            color: #fff;
+            text-align: right;
+        }
+        .sub-accordion-header:hover { background: rgba(255, 255, 255, 0.05); }
+        .sub-accordion-header::before {
+            content: "\f107";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            font-size: 14px;
+            color: #888;
+            transition: 0.3s;
+        }
+        .sub-accordion-item.active .sub-accordion-header::before {
+            transform: rotate(180deg);
+            color: #96c93d;
+        }
+        .sub-accordion-item.active .sub-accordion-header {
+            background: rgba(150, 201, 61, 0.08);
+            color: #96c93d;
+        }
+        .sub-accordion-content {
+            display: none;
+            padding: 15px;
+            background: rgba(20, 22, 28, 0.4);
+        }
+        .sub-accordion-item.active .sub-accordion-content { display: block; }
+
         /* ستايل لوحة التحكم والحقول الداخلية */
         .control-panel { background: #1d1f27; padding: 20px; border-radius: 12px; border: 1px solid #444; }
         .input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
@@ -351,16 +399,16 @@
         .btn-update { background: linear-gradient(135deg, #f1c40f, #f39c12); color: #111; box-shadow: 0 4px 12px rgba(241, 196, 15, 0.2); }
 
         .result-box { margin-top: 20px; padding: 15px; background: rgba(33, 147, 176, 0.15); border-right: 5px solid #2193b0; border-radius: 8px; line-height: 1.7; font-size: 14px; color: #fff; text-align: right; }
+        .waste-alert-box { margin-top: 15px; padding: 15px; background: rgba(241, 196, 15, 0.15); border-right: 5px solid #f1c40f; border-radius: 8px; line-height: 1.6; font-size: 13px; color: #fff; text-align: right; }
+        
         .table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 10px; border: 1px solid #444; margin-top: 10px; background: #1d1f27; width: 100%; }
         
-        table { width: 100%; border-collapse: collapse; font-size: 12px; min-width: 750px; background: #1d1f27; display: table; margin-top: 12px; }
+        table { width: 100%; border-collapse: collapse; font-size: 12px; min-width: 730px; background: #1d1f27; display: table; margin-top: 5px; }
         th, td { border: 1px solid #444; padding: 10px; text-align: right; white-space: nowrap; }
         th { background: #15171e; color: #e0e0e0; font-weight: bold; }
         tr:nth-child(even) { background: rgba(255, 255, 255, 0.02); }
-        
-        .cost-section { background: rgba(241, 196, 15, 0.1); padding: 20px; border-radius: 12px; margin-top: 20px; display: flex; flex-wrap: wrap; align-items: center; gap: 15px; font-weight: bold; border: 1px solid rgba(241, 196, 15, 0.3); justify-content: space-between; }
 
-        /* 🆕 واجهة النافذة المنبثقة الفاخرة المدمجة لأسماء المشاريع */
+        /* النافذة المنبثقة الفاخرة */
         .protrack-modal {
             display: none;
             position: fixed;
@@ -440,8 +488,8 @@
         @media print { 
             .no-print { display: none !important; } 
             .container { box-shadow: none; border: none; padding: 0; width: 100%; max-width: 100%; margin: 0; }
-            .accordion-content { display: block !important; }
-            .accordion-item { border: none; margin-bottom: 30px; box-shadow: none; }
+            .accordion-content, .sub-accordion-content { display: block !important; }
+            .accordion-item, .sub-accordion-item { border: none; margin-bottom: 30px; box-shadow: none; }
             .table-wrapper { overflow: visible; border: none; }
             table { min-width: auto; }
             body { background: white; color: black; }
@@ -498,7 +546,7 @@
             <button class="btn-back-main no-print" onclick="backToDashboard()"><i class="fas fa-arrow-left"></i> رجوع للوحة الرئيسية</button>
         </div>
 
-        <div class="accordion-item" id="acc-item-calc">
+        <div class="accordion-item no-print" id="acc-item-calc">
             <div class="accordion-header" onclick="toggleAccordion('acc-item-calc')">📊 التبويب الأول: حساب الكمية لـعنصر إنشائي</div>
             <div class="accordion-content">
                 <div class="control-panel">
@@ -529,6 +577,7 @@
                     </div>
                     
                     <div id="current-result" class="result-box" style="display:none;"></div>
+                    <div id="waste-alert" class="waste-alert-box" style="display:none;"></div>
                 </div>
             </div>
         </div>
@@ -554,33 +603,37 @@
             </div>
         </div>
 
-        <div class="accordion-item" id="acc-item-summary">
-            <div class="accordion-header" onclick="toggleAccordion('acc-item-summary')">📦 التبويب الثالث: ملخص طلبية الحديد النهائية (Order Summary)</div>
+        <div class="accordion-item" id="acc-item-waste-recycler">
+            <div class="accordion-header" onclick="toggleAccordion('acc-item-waste-recycler')">♻️ التبويب الثالث: مخزن وإدارة فضلات حديد الموقع (12 م)</div>
             <div class="accordion-content">
+                <p style="font-size: 13px; color: #aaa; margin-bottom: 15px;"><i class="fas fa-info-circle" style="color: #2193b0;"></i> يقوم النظام تلقائياً برصد الأطوال المتبقية (القصيات والفضلات الإنشائية) الناتجة من قص السيخ القياسي العراقي (12م) لتدويرها وإعادة استخدامها، مع إهمال الفضلات التالفة التي يقل طولها عن 1 متر.</p>
                 <div class="table-wrapper">
-                    <table id="summary-table">
+                    <table>
                         <thead>
                             <tr>
+                                <th>العنصر المصدر</th>
                                 <th>قطر السيخ (mm)</th>
-                                <th>الوزن المطلوب (كجم)</th>
-                                <th>الوزن المطلوب (طن)</th>
-                                <th>العدد التقريبي للأسياخ (شيش بطول 12م)</th>
+                                <th>الطول المطلوب للقطعة (م)</th>
+                                <th>عدد القطع الناتجة</th>
+                                <th>الفضلة المتبقية من السيخ الواحد (م)</th>
+                                <th style="color: #00b09b;">حالة التدوير الافتراضية</th>
                             </tr>
                         </thead>
-                        <tbody id="summary-body"></tbody>
+                        <tbody id="waste-recycler-body"></tbody>
                     </table>
                 </div>
+            </div>
+        </div>
 
-                <div class="cost-section">
-                    <div style="flex: 1; min-width: 250px;">
-                        <label style="color:inherit;"><i class="fas fa-money-bill-wave"></i> سعر طن الحديد في السوق المحلي:</label>
-                        <input type="number" id="price-per-ton" style="width: 160px; margin-right: 10px; display:inline-block;" oninput="calculateCost()">
-                    </div>
-                    <span id="total-cost-display" style="font-size: 1.15rem; background: linear-gradient(to right, #96c93d, #00b09b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: bold;">التكلفة الكلية المقدرة: 0 دينار عراقي</span>
-                </div>
+        <div class="accordion-item" id="acc-item-summary">
+            <div class="accordion-header" onclick="toggleAccordion('acc-item-summary')">📦 التبويب الرابع: ملخص طلبيات الشراء حسب العناصر الإنشائية (Order Summary)</div>
+            <div class="accordion-content">
+                <p style="font-size: 13px; color: #aaa; margin-bottom: 15px;"><i class="fas fa-layer-group" style="color: #96c93d;"></i> اضغط على اسم أي عنصر إنشائي محفوظ أدناه لفتح تفاصيل وجدول طلبية حديد التسليح المستقلة الخاصة به:</p>
+                
+                <div class="sub-accordion-container" id="sub-accordions-order-wrapper"></div>
 
                 <div class="actions no-print" style="justify-content: center; margin-top: 30px;">
-                    <button onclick="window.print()" style="background: var(--gradient-blue); padding: 12px 30px; width: auto; flex: none; box-shadow: 0 4px 12px rgba(33, 147, 176, 0.3);"><i class="fas fa-print"></i> طباعة وتصدير تقرير المشروع الكامل PDF</button>
+                    <button onclick="window.print()" style="background: linear-gradient(135deg, #2193b0, #6dd5ed); padding: 12px 30px; width: auto; flex: none; box-shadow: 0 4px 12px rgba(33, 147, 176, 0.3);"><i class="fas fa-print"></i> طباعة وتصدير تقرير المشروع الكامل PDF</button>
                 </div>
             </div>
         </div>
@@ -589,10 +642,8 @@
 </div>
 
 <script>
-    // ========== نظام إدارة وحسابات حديد التسليح - JavaScript ==========
     let projects = JSON.parse(localStorage.getItem('rebar_dashboard_projects_v4')) || {"مشروع رقم 1": [], "مشروع رقم 2": []};
     let currentProjectName = "";
-    
     let modalMode = "create"; 
     let oldProjectTargetName = "";
 
@@ -600,36 +651,35 @@
         localStorage.setItem('rebar_dashboard_projects_v4', JSON.stringify(projects));
     }
 
-    // دالة التحكم بالتبويبات لدعم الغلق التلقائي للبقية عند فتح أي تبويب
     function toggleAccordion(itemId) {
         const item = document.getElementById(itemId);
         const isActive = item.classList.contains('active');
-        
         const allItems = document.querySelectorAll('.accordion-item');
         allItems.forEach(el => el.classList.remove('active'));
-        
-        if (!isActive) {
-            item.classList.add('active');
-        }
+        if (!isActive) item.classList.add('active');
     }
 
-    // واجهة لوحة التحكم بالمشاريع
+    function toggleSubAccordion(subItemId) {
+        const item = document.getElementById(subItemId);
+        const isActive = item.classList.contains('active');
+        const allSubItems = document.querySelectorAll('.sub-accordion-item');
+        allSubItems.forEach(el => el.classList.remove('active'));
+        if (!isActive) item.classList.add('active');
+    }
+
     function renderDashboard() {
         const listContainer = document.getElementById('project-list-container');
         const searchVal = document.getElementById('project-search').value.toLowerCase().trim();
-        
         listContainer.innerHTML = "";
         
         Object.keys(projects).forEach(pName => {
             if (searchVal !== "" && !pName.toLowerCase().includes(searchVal)) return;
-            
             const card = document.createElement('div');
             card.className = "project-card";
             card.onclick = function(e) {
                 if(e.target.tagName.toLowerCase() === 'button' || e.target.parentElement.tagName.toLowerCase() === 'button' || e.target.tagName.toLowerCase() === 'i') return;
                 openProject(pName);
             };
-            
             card.innerHTML = `
                 <div class="proj-title"><i class="fas fa-folder-open" style="color:#2193b0; margin-left:8px;"></i> ${pName}</div>
                 <div class="proj-actions no-print">
@@ -639,81 +689,46 @@
             `;
             listContainer.appendChild(card);
         });
-        
-        if(listContainer.children.length === 0) {
-            listContainer.innerHTML = `<p style="text-align:center; color:#aaa; padding:20px;">لا توجد مشاريع مطابقة للبحث.</p>`;
-        }
     }
 
-    function filterProjects() {
-        renderDashboard();
-    }
+    function filterProjects() { renderDashboard(); }
 
     function createNewProject() {
         modalMode = "create";
         document.getElementById('modalTitle').innerText = "إضافة مشروع جديد";
-        document.getElementById('modalLabel').innerHTML = `<i class="fas fa-edit"></i> أدخل اسم مشروع الحديد الجديد:`;
         document.getElementById('modalProjectNameInput').value = "";
         document.getElementById('projectModal').style.display = "flex";
-        document.getElementById('modalProjectNameInput').focus();
     }
 
     function renameProject(oldName) {
         modalMode = "rename";
         oldProjectTargetName = oldName;
         document.getElementById('modalTitle').innerText = "تعديل اسم المشروع";
-        document.getElementById('modalLabel').innerHTML = `<i class="fas fa-edit"></i> تعديل اسم المشروع "${oldName}" إلى:`;
         document.getElementById('modalProjectNameInput').value = oldName;
         document.getElementById('projectModal').style.display = "flex";
-        document.getElementById('modalProjectNameInput').focus();
     }
 
-    function closeProjectModal() {
-        document.getElementById('projectModal').style.display = "none";
-    }
+    function closeProjectModal() { document.getElementById('projectModal').style.display = "none"; }
 
     function handleModalSubmit() {
         const name = document.getElementById('modalProjectNameInput').value.trim();
-        
-        if (!name) {
-            alert("الرجاء إدخال اسم مشروع صالح!");
-            return;
-        }
-
+        if (!name) return alert("الرجاء إدخال اسم مشروع صالح!");
         if (modalMode === "create") {
-            if (!projects[name]) {
-                projects[name] = [];
-                saveProjects();
-                renderDashboard();
-                closeProjectModal();
-            } else if (projects[name]) {
-                alert("هذا الاسم موجود مسبقاً!");
-            }
-        } else if (modalMode === "rename") {
+            if (!projects[name]) { projects[name] = []; saveProjects(); renderDashboard(); closeProjectModal(); }
+            else { alert("هذا الاسم موجود مسبقاً!"); }
+        } else {
             if (name !== oldProjectTargetName) {
                 if (projects[name]) return alert("هذا الاسم موجود مسبقاً!");
                 projects[name] = projects[oldProjectTargetName];
                 delete projects[oldProjectTargetName];
-                saveProjects();
-                renderDashboard();
-                closeProjectModal();
-            } else {
-                closeProjectModal();
-            }
+                saveProjects(); renderDashboard(); closeProjectModal();
+            } else { closeProjectModal(); }
         }
     }
 
-    document.getElementById('modalProjectNameInput').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            handleModalSubmit();
-        }
-    });
-
     function deleteProjectDirect(name) {
         if (confirm(`هل أنت متأكد من حذف مشروع "${name}" وكل بياناته الإنشائية؟`)) {
-            delete projects[name];
-            saveProjects();
-            renderDashboard();
+            delete projects[name]; saveProjects(); renderDashboard();
         }
     }
 
@@ -722,11 +737,6 @@
         document.getElementById('projects-dashboard-view').style.display = 'none';
         document.getElementById('single-project-view').style.display = 'block';
         document.getElementById('active-project-title').innerHTML = `<i class="fas fa-folder-open" style="color:#2193b0;"></i> ` + name;
-        
-        document.getElementById('acc-item-calc').classList.remove('active');
-        document.getElementById('acc-item-records').classList.remove('active');
-        document.getElementById('acc-item-summary').classList.remove('active');
-        
         cancelEdit();
         renderAll();
     }
@@ -779,26 +789,15 @@
     function updateForm() {
         const type = document.getElementById('element-type').value;
         const container = document.getElementById('form-container');
-        
         container.innerHTML = forms[type].map(f => {
             if (f.type === 'select') {
-                return `
-                    <div class="input-group">
-                        <label>${f.label}</label>
-                        <select id="inp_${f.id}" onchange="toggleConditionalFields()">
-                            ${f.options.map(opt => `<option value="${opt.v}" ${opt.v===f.val?'selected':''}>${opt.t}</option>`).join('')}
-                        </select>
-                    </div>`;
+                return `<div class="input-group"><label>${f.label}</label><select id="inp_${f.id}" onchange="toggleConditionalFields()">${f.options.map(opt => `<option value="${opt.v}" ${opt.v===f.val?'selected':''}>${opt.t}</option>`).join('')}</select></div>`;
             }
-            return `
-                <div class="input-group" id="group_${f.id}">
-                    <label>${f.label}</label>
-                    <input type="number" id="inp_${f.id}" value="${f.val}" step="0.01">
-                </div>`;
+            return `<div class="input-group" id="group_${f.id}"><label>${f.label}</label><input type="number" id="inp_${f.id}" value="${f.val}" step="0.01"></div>`;
         }).join('');
-        
         toggleConditionalFields();
         document.getElementById('current-result').style.display = 'none';
+        document.getElementById('waste-alert').style.display = 'none';
     }
 
     function toggleConditionalFields() {
@@ -806,13 +805,7 @@
         if (type === 'beam' || type === 'column') {
             const confEl = document.getElementById('inp_confinement');
             const confField = document.getElementById('group_s_space_conf');
-            if (confEl && confField) {
-                if (confEl.value == "1") {
-                    confField.style.display = "flex";
-                } else {
-                    confField.style.display = "none";
-                }
-            }
+            if (confEl && confField) confField.style.display = confEl.value == "1" ? "flex" : "none";
         }
     }
 
@@ -832,6 +825,7 @@
         let totalWeight = 0;
         let wst = (getV('waste') || 5) / 100;
         let infoText = "";
+        let detectedCuts = [];
 
         const addWeight = (d, w) => {
             if (w <= 0) return;
@@ -855,11 +849,13 @@
             let numX = Math.floor(w / spX) + 1;
             let weightX = (lenX * numX) * layers * (Math.pow(diaX, 2) / 162);
             addWeight(diaX, weightX * (1 + wst));
+            detectedCuts.push({ dia: diaX, length: lenX, count: numX * layers * totalQty });
 
             let lenY = (realW - 2*cov) + 2*hook; 
             let numY = Math.floor(l / spY) + 1;
             let weightY = (lenY * numY) * layers * (Math.pow(diaY, 2) / 162);
             addWeight(diaY, weightY * (1 + wst));
+            detectedCuts.push({ dia: diaY, length: lenY, count: numY * layers * totalQty });
 
             let chairCount = 0;
             if (layers === 2) {
@@ -870,6 +866,7 @@
                     let chairTotalLen = chairCount * chairLen;
                     let chairW = chairTotalLen * (Math.pow(12, 2) / 162); 
                     addWeight(12, chairW * (1 + wst));
+                    detectedCuts.push({ dia: 12, length: chairLen, count: chairCount * totalQty });
                 }
             }
             
@@ -886,6 +883,7 @@
             let realL = addOverlap(l, dia);
             let mainW = (count * realL) * (Math.pow(dia, 2) / 162);
             addWeight(dia, mainW * (1 + wst));
+            detectedCuts.push({ dia: dia, length: realL, count: count * totalQty });
 
             let totalStirCount = 0;
             let detailsStir = "";
@@ -922,6 +920,7 @@
 
             let stirW = totalStirLen * (Math.pow(s_dia, 2) / 162);
             addWeight(s_dia, stirW * (1 + wst));
+            detectedCuts.push({ dia: s_dia, length: totalStirLen / totalStirCount, count: totalStirCount * totalQty });
 
             infoText = `<i class="fas fa-border-all"></i> <strong>العدد الكلي للاتاري (الكانات):</strong> ${totalStirCount * totalQty} أترية.<br><i class="fas fa-list-ol"></i> <strong>تفاصيل التوزيع:</strong> ${detailsStir}.<br>`;
         }
@@ -937,6 +936,7 @@
             let realL = addOverlap(columnTotalLength, dia);
             let mainW = (count * realL) * (Math.pow(dia, 2) / 162);
             addWeight(dia, mainW * (1 + wst));
+            detectedCuts.push({ dia: dia, length: realL, count: count * totalQty });
 
             let totalStirCount = 0;
             let detailsStir = "";
@@ -974,6 +974,7 @@
 
             let totalStirW = (totalStirCount * singleSetLen) * (Math.pow(s_dia, 2) / 162);
             addWeight(s_dia, totalStirW * (1 + wst));
+            detectedCuts.push({ dia: s_dia, length: singleSetLen, count: totalStirCount * totalQty });
 
             infoText = `<i class="fas fa-border-all"></i> <strong>العدد الكلي للاتاري (الكانات):</strong> ${totalStirCount * totalQty} أترية.<br><i class="fas fa-list-ol"></i> <strong>تفاصيل التوزيع:</strong> ${detailsStir}.<br>`;
         }
@@ -989,7 +990,26 @@
             <small style="color:#aaa;">(محدث: شامل التداخل الفعلي، الهالك والكراسي المخصصة مع الكانات الداخلية إن وجدت).</small>
         `;
 
-        return { totalWeight, diaMap, totalQty };
+        let alertDiv = document.getElementById('waste-alert');
+        let wasteSavingText = "";
+        
+        detectedCuts.forEach(c => {
+            if (c.length < 12 && c.length > 0) {
+                let itemsPerBar = Math.floor(12 / c.length);
+                let leftover = Number((12 - (itemsPerBar * c.length)).toFixed(4));
+                if (leftover >= 1.00) {
+                    wasteSavingText += `• القطر Ø${c.dia} مم: طول القطعة ${c.length.toFixed(2)}م يترك فضلة قدرها <strong>(${leftover.toFixed(2)} م)</strong> من كل سيخ 12م تم قصه بالموقع.<br>`;
+                }
+            }
+        });
+        if(wasteSavingText !== "") {
+            alertDiv.style.display = "block";
+            alertDiv.innerHTML = `♻️ <strong>رصد فضلات القص الافتراضية (ProTrack Optimization):</strong><br>` + wasteSavingText;
+        } else {
+            alertDiv.style.display = "none";
+        }
+
+        return { totalWeight, diaMap, totalQty, detectedCuts };
     }
 
     function saveCalculation() {
@@ -998,79 +1018,56 @@
         const name = document.getElementById('element-name').value || "عنصر إنشائي غير مسمى";
         const typeSelect = document.getElementById('element-type');
         const typeValue = typeSelect.value;
-        const typeText = typeSelect.options[typeSelect.selectedIndex].text;
         
         let inputValues = {};
-        forms[typeValue].forEach(f => {
-            inputValues[f.id] = getV(f.id);
-        });
+        forms[typeValue].forEach(f => { inputValues[f.id] = getV(f.id); });
 
         const itemData = {
             name, 
-            type: typeText, 
+            type: typeSelect.options[typeSelect.selectedIndex].text, 
             typeValue: typeValue, 
             qty: calc.totalQty, 
             weight: calc.totalWeight, 
             breakdown: calc.diaMap,
-            inputs: inputValues 
+            inputs: inputValues,
+            cuts: calc.detectedCuts 
         };
 
         const editIndex = parseInt(document.getElementById('edit-index').value);
+        if (editIndex > -1) { projects[currentProjectName][editIndex] = itemData; cancelEdit(); } 
+        else { projects[currentProjectName].push(itemData); document.getElementById('element-name').value = ""; }
 
-        if (editIndex > -1) {
-            projects[currentProjectName][editIndex] = itemData;
-            cancelEdit();
-        } else {
-            projects[currentProjectName].push(itemData);
-            document.getElementById('element-name').value = "";
-        }
-
-        saveProjects();
-        renderAll();
-        
-        toggleAccordion('acc-item-records');
+        saveProjects(); renderAll(); toggleAccordion('acc-item-records');
     }
 
     function editItem(index) {
         const item = projects[currentProjectName][index];
         if (!item) return;
-
         document.getElementById('edit-index').value = index;
         document.getElementById('element-name').value = item.name;
         document.getElementById('element-type').value = item.typeValue || 'slab'; 
-        
         updateForm();
-
         if (item.inputs) {
             for (let [key, val] of Object.entries(item.inputs)) {
-                const el = document.getElementById('inp_' + key);
-                if (el) el.value = val;
+                const el = document.getElementById('inp_' + key); if (el) el.value = val;
             }
         }
-
-        toggleConditionalFields();
-
         const saveBtn = document.getElementById('btn-save-action');
         saveBtn.innerHTML = "<i class='fas fa-sync'></i> تحديث البيانات الحالية";
         saveBtn.className = "btn-update"; 
         document.getElementById('btn-cancel-edit').style.display = 'flex';
-        
-        calculate(); 
-
-        toggleAccordion('acc-item-calc');
-        document.getElementById('acc-item-calc').scrollIntoView({ behavior: 'smooth' });
+        calculate(); toggleAccordion('acc-item-calc');
     }
 
     function cancelEdit() {
         document.getElementById('edit-index').value = "-1";
         document.getElementById('element-name').value = "";
         document.getElementById('btn-cancel-edit').style.display = 'none';
-        
         const saveBtn = document.getElementById('btn-save-action');
         saveBtn.innerHTML = "<i class='fas fa-save'></i> 2. حفظ في سجل المشروع";
         saveBtn.className = "btn-save";
-        
         document.getElementById('current-result').style.display = 'none';
+        document.getElementById('waste-alert').style.display = 'none';
         updateForm(); 
     }
 
@@ -1078,82 +1075,87 @@
         if (!currentProjectName) return;
         const list = projects[currentProjectName] || [];
         const tbody = document.getElementById('saved-body');
-        const summaryBody = document.getElementById('summary-body');
+        const subAccordionWrapper = document.getElementById('sub-accordions-order-wrapper');
+        const wasteRecyclerBody = document.getElementById('waste-recycler-body');
         
         tbody.innerHTML = list.map((item, index) => {
             let details = Object.entries(item.breakdown).map(([d, w]) => 
                 `<span style="display:inline-block; font-size:12px; background:#15171e; color:#6dd5ed; padding:4px 8px; border-radius:4px; margin:2px; font-weight:600; border:1px solid rgba(255,255,255,0.05);">Ø ${d}: ${Math.round(w)} كجم</span>`
             ).join(' ');
-            
-            return `
-                <tr>
-                    <td><strong>${item.name}</strong></td>
-                    <td>${item.type}</td>
-                    <td><span style="font-weight:bold; color:#2193b0;">${item.qty}</span></td>
-                    <td>${item.weight.toFixed(1)}</td>
-                    <td>${details}</td>
-                    <td class="no-print">
-                        <div style="display:flex; gap:5px; justify-content:center;">
-                            <button class="action-btn btn-edit" onclick="editItem(${index})" title="تعديل"><i class="fas fa-edit"></i></button>
-                            <button class="action-btn btn-del" onclick="deleteItem(${index})" title="حذف"><i class="fas fa-times"></i></button>
-                        </div>
-                    </td>
-                </tr>`;
+            return `<tr><td><strong>${item.name}</strong></td><td>${item.type}</td><td><span style="font-weight:bold; color:#2193b0;">${item.qty}</span></td><td>${item.weight.toFixed(1)}</td><td>${details}</td><td class="no-print"><div style="display:flex; gap:5px; justify-content:center;"><button class="action-btn btn-edit" onclick="editItem(${index})"><i class="fas fa-edit"></i></button><button class="action-btn btn-del" onclick="deleteItem(${index})"><i class="fas fa-times"></i></button></div></td></tr>`;
         }).join('');
 
-        let totalSummary = {};
-        list.forEach(item => {
-            for (let [dia, w] of Object.entries(item.breakdown)) {
-                totalSummary[dia] = (totalSummary[dia] || 0) + w;
+        let wasteRecyclerHTML = "";
+        let subAccordionsHTML = "";
+
+        list.forEach((item, index) => {
+            if (item.cuts) {
+                item.cuts.forEach(c => {
+                    if (c.length < 12 && c.length > 0) {
+                        let itemsPerBar = Math.floor(12 / c.length);
+                        let leftover = Number((12 - (itemsPerBar * c.length)).toFixed(4));
+                        let calculatedBarsUsed = Math.ceil(c.count / itemsPerBar);
+
+                        if (leftover >= 1.00) {
+                            wasteRecyclerHTML += `<tr><td>${item.name}</td><td>Ø ${c.dia} مم</td><td>${c.length.toFixed(2)} م</td><td>${c.count} قطع</td><td><strong>${leftover.toFixed(2)} م</strong></td><td style="color:#00b09b; font-weight:bold;"><i class="fas fa-recycle"></i> تم التدوير (متوفر ${calculatedBarsUsed} قطعة فضلات)</td></tr>`;
+                        }
+                    }
+                });
             }
+
+            let itemTableRows = Object.entries(item.breakdown)
+                .sort((a,b) => Number(a[0]) - Number(b[0]))
+                .map(([dia, weightKg]) => {
+                    let weightOfOneBar = (Math.pow(Number(dia), 2) / 162) * 12;
+                    let approximateBarCount = Math.ceil(weightKg / weightOfOneBar);
+                    return `
+                        <tr>
+                            <td><strong>Ø ${dia} مم</strong></td>
+                            <td>${weightKg.toFixed(2)} كجم</td>
+                            <td><strong>${(weightKg/1000).toFixed(3)} طن</strong></td>
+                            <td style="color:#96c93d; font-weight:bold;"><i class="fas fa-list"></i> ${approximateBarCount} شيش كلي</td>
+                        </tr>`;
+                }).join('');
+
+            subAccordionsHTML += `
+                <div class="sub-accordion-item" id="sub-acc-${index}">
+                    <div class="sub-accordion-header" onclick="toggleSubAccordion('sub-acc-${index}')">
+                        <span><i class="fas fa-cube" style="color:#96c93d; margin-left:8px;"></i> ملخص طلبية: ${item.name} (${item.type})</span>
+                    </div>
+                    <div class="sub-accordion-content">
+                        <div class="table-wrapper">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>قطر السيخ (mm)</th>
+                                        <th>الوزن المطلوب (كجم)</th>
+                                        <th>الوزن المطلوب (طن)</th>
+                                        <th>العدد التقريبي للأسياخ (12م)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${itemTableRows || `<tr><td colspan="4" style="text-align:center; color:#aaa; padding:10px;">لا توجد بيانات تسليح متوفرة لهذا العنصر.</td></tr>`}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>`;
         });
 
-        summaryBody.innerHTML = Object.entries(totalSummary)
-            .sort((a,b) => Number(a[0]) - Number(b[0]))
-            .map(([dia, totalW]) => {
-                let weightOfOneBar = (Math.pow(Number(dia), 2) / 162) * 12;
-                let approximateBarCount = Math.ceil(totalW / weightOfOneBar);
-
-                return `
-                    <tr>
-                        <td><strong>Ø ${dia} مم</strong></td>
-                        <td>${totalW.toFixed(2)}</td>
-                        <td><strong>${(totalW/1000).toFixed(3)} طن</strong></td>
-                        <td style="color:#96c93d; font-weight:bold;"><i class="fas fa-list"></i> ${approximateBarCount} سيخ / شيش</td>
-                    </tr>`;
-            }).join('');
-
-        calculateCost(); 
+        wasteRecyclerBody.innerHTML = wasteRecyclerHTML === "" ? `<tr><td colspan="6" style="text-align:center; color:#aaa; padding:15px;">لا توجد فضلات صالحة للتدوير حالياً (جميع الفضلات الناتجة يقل طولها عن 1 متر وتم إهمالها كتالف).</td></tr>` : wasteRecyclerHTML;
+        subAccordionWrapper.innerHTML = subAccordionsHTML === "" ? `<p style="text-align:center; color:#aaa; padding:20px;">لا توجد عناصر محفوظة لاستعراض طلبياتها. يرجى إضافة عناصر أولاً.</p>` : subAccordionsHTML;
     }
 
     function deleteItem(index) { 
         if(confirm("هل أنت متأكد من حذف هذا العنصر الإنشائي؟")) {
-            projects[currentProjectName].splice(index, 1); 
-            saveProjects(); 
-            renderAll(); 
-            if (parseInt(document.getElementById('edit-index').value) == index) {
-                cancelEdit();
-            }
+            projects[currentProjectName].splice(index, 1); saveProjects(); renderAll();
+            if (parseInt(document.getElementById('edit-index').value) == index) cancelEdit();
         }
-    }
-
-    function calculateCost() {
-        const price = parseFloat(document.getElementById('price-per-ton').value) || 0;
-        if (!currentProjectName) return;
-        const list = projects[currentProjectName] || [];
-        let totalW_kg = list.reduce((sum, item) => sum + item.weight, 0);
-        let cost = (totalW_kg / 1000) * price;
-        document.getElementById('total-cost-display').innerText = `التكلفة الكلية المقدرة: ${cost.toLocaleString(undefined, {maximumFractionDigits: 0})} دينار عراقي`;
     }
 
     document.addEventListener('DOMContentLoaded', () => {
         const themeToggleBtn = document.getElementById('themeToggleBtn');
-        const currentTheme = localStorage.getItem("protrack_rebar_theme");
-        
-        if (currentTheme === "light") { 
-            document.body.classList.add("light-mode"); 
-        }
-        
+        if (localStorage.getItem("protrack_rebar_theme") === "light") document.body.classList.add("light-mode"); 
         if(themeToggleBtn) {
             themeToggleBtn.addEventListener('click', () => {
                 document.body.classList.toggle("light-mode");

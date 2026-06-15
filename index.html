@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>🏗️ نظام ProTrack المتكامل لإدارة حديد التسليح</title>
+    <title>🏗️ نظام ProTrack المتكامل لحساب حديد التسليح</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     
     <style>
-        /* 🎨 التنسيقات العامة والمحسَّنة لهوية ProTrack الفاخرة */
+        /* 🎨 التنسيقات العامة والمحسَّنة من الكود القديم */
         * {
             margin: 0;
             padding: 0;
@@ -29,19 +29,23 @@
             --gradient-purple: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%);
         }
         
-        body { 
-            font-family: 'Cairo', sans-serif; 
-            background: linear-gradient(135deg, #1f1f2e, #12121c); 
-            margin: 0; 
-            padding: 15px; 
-            color: #e0e0e0; 
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(135deg, #1f1f2e, #12121c);
+            color: #e0e0e0;
+            margin: 0;
+            padding: 12px;
             min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
             direction: rtl;
             scroll-behavior: smooth;
             transition: background 0.5s ease, color 0.5s ease;
         }
         
-        /* 🌙 وضع الإضاءة المحسن بالكامل المطابق لكود ProTrack الأصلي (Light Mode) */
+        /* 🌙 وضع الإضاءة المحسن بالكامل (Light Mode) من الكود القديم */
         body.light-mode {
             background: #f0f2f5;
             color: #111;
@@ -52,35 +56,49 @@
             color: #111;
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
         }
-        body.light-mode h1, body.light-mode h2, body.light-mode h3 {
+        body.light-mode h1, body.light-mode h2, body.light-mode h3, body.light-mode h4, body.light-mode h5 {
             color: #1a73e8;
             -webkit-text-fill-color: #1a73e8;
         }
-        body.light-mode .project-card, body.light-mode .control-panel {
+        body.light-mode button {
+            background: linear-gradient(135deg, #1a73e8, #34a853);
+            color: #fff;
+        }
+        body.light-mode button.delete, body.light-mode button.action-btn.del-btn, body.light-mode .btn-del {
+            background: #d93025 !important;
+        }
+        body.light-mode .project-card, body.light-mode .project, body.light-mode .control-panel {
             background: #f1f3f4;
             border: 1px solid #dadce0;
             color: #202124;
         }
-        body.light-mode .project-card:hover {
+        body.light-mode .project-card:hover, body.light-mode .project:hover {
             background: #e8eaed;
         }
-        body.light-mode input, body.light-mode select {
+        body.light-mode input, body.light-mode textarea, body.light-mode select {
             background-color: #ffffff;
             color: #202124;
             border-color: #bdc1c6;
         }
+        
+        /* تنسيق التبويبات المنسدلة في الوضع النهاري لتكون نظيفة ومنفصلة بدون خطوط حواف */
+        body.light-mode .accordion-item {
+            background: #ffffff;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
         body.light-mode .accordion-header {
             background: #ffffff;
-            border: 1px solid #dadce0;
-            color: #202124;
+            color: #111111;
         }
         body.light-mode .accordion-item.active .accordion-header {
             background: #f8fafc;
+            color: #1a73e8;
         }
         body.light-mode .accordion-content {
             background: #ffffff;
-            border-color: #dadce0;
+            border-top: 1px dashed #e8eaed;
         }
+        
         body.light-mode table {
             background: #ffffff;
         }
@@ -102,21 +120,12 @@
         body.light-mode label {
             color: #4a5568;
         }
-
-        /* 📦 حاوية التصميم الرئيسية */
-        .container { 
-            max-width: 1000px; 
-            margin: 40px auto 0 auto; 
-            background: rgba(40, 44, 52, 0.95); 
-            padding: 25px; 
-            border-radius: 16px; 
-            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4); 
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(6px);
-            box-sizing: border-box; 
+        body.light-mode .result-box {
+            background: #e0f2fe;
+            color: #111;
         }
         
-        /* ⚙️ زر الترس العلوي لوضع الإضاءة المتطابق مع الكود الأصلي */
+        /* ⚙️ زر الترس العلوي المتطابق */
         .settings-toggle {
             background: rgba(40, 44, 52, 0.9);
             color: #e0e0e0;
@@ -144,11 +153,27 @@
             transform: rotate(45deg);
         }
 
+        /* 📦 صندوق الكونتينر الرئيسي للتطبيق */
+        .container {
+            background: rgba(40, 44, 52, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(6px);
+            padding: 25px 20px;
+            border-radius: 16px;
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
+            width: 100%;
+            max-width: 850px;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+            margin-top: 60px;
+            box-sizing: border-box;
+        }
+
         /* واجهة إدارة المشاريع الرئيسية */
-        #projects-dashboard-view { display: block; }
+        #projects-dashboard-view { display: block; width: 100%; }
         .dashboard-header { display: flex; flex-direction: column; align-items: center; text-align: center; margin-bottom: 25px; position: relative; }
         
         h1 {
+            color: #ffffff;
             font-size: 26px;
             margin-bottom: 8px;
             background: linear-gradient(to right, #6dd5ed, #2193b0);
@@ -157,16 +182,19 @@
             text-align: center;
             font-weight: bold;
         }
-        h2, h3 {
+        h2, h3, h4, h5 {
+            color: #ffffff;
             background: linear-gradient(to right, #6dd5ed, #2193b0);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             font-weight: bold;
         }
-        
-        /* الأزرار المحدثة بتدرجات ProTrack الاحترافية وظلالها المشعة */
+        h2 { font-size: 1.25rem; margin-top: 0; }
+        h3 { font-size: 1.05rem; margin-top: 0; }
+
+        /* الأزرار الاحترافية */
         button {
-            background: var(--gradient-green);
+            background: linear-gradient(135deg, #00b09b, #96c93d);
             color: #fff;
             padding: 10px 20px;
             border: none;
@@ -176,6 +204,7 @@
             cursor: pointer;
             transition: all 0.3s ease;
             margin-top: 8px;
+            margin-right: 4px;
             box-shadow: 0 4px 12px rgba(0, 255, 180, 0.2);
             display: flex;
             align-items: center;
@@ -188,7 +217,7 @@
         }
         
         .btn-back-main { 
-            background: var(--gradient-purple); 
+            background: linear-gradient(135deg, #8e44ad, #9b59b6); 
             color: white; 
             padding: 10px 20px; 
             border-radius: 10px; 
@@ -202,6 +231,7 @@
             border: none;
             cursor: pointer;
             transition: all 0.3s;
+            margin: 0;
         }
         .btn-back-main:hover {
             background: linear-gradient(135deg, #6c3483, #8e44ad);
@@ -212,8 +242,21 @@
         .search-container input { padding: 12px 45px 12px 15px; border-radius: 10px; border: 1px solid #444; font-size: 14px; width: 100%; box-sizing: border-box; background-color: #1d1f27; color: white; }
         .search-container::after { content: "🔍"; position: absolute; right: 15px; top: 50%; transform: translateY(-50%); font-size: 16px; pointer-events: none; }
         
-        .project-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 25px; }
-        .project-card { background: #282c34; border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+        .project-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 25px; width: 100%; }
+        .project-card { 
+            padding: 12px;
+            background: #282c34;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            margin: 4px 0;
+            transition: background 0.3s, transform 0.2s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            font-size: 13px;
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            cursor: pointer; 
+        }
         .project-card:hover { background: #343a40; transform: translateY(-2px); border-color: #6dd5ed; }
         .project-card .proj-title { font-size: 15px; font-weight: bold; color: #fff; flex-grow: 1; text-align: right; }
         body.light-mode .project-card .proj-title { color: #202124; }
@@ -221,33 +264,74 @@
         
         /* أزرار الإجراءات الصغيرة داخل الكروت */
         .action-btn {
-            padding: 6px 12px !important;
+            padding: 5px 10px !important;
             font-size: 12px !important;
-            border-radius: 6px !important;
+            border-radius: 5px !important;
             margin: 0 !important;
             box-shadow: none !important;
             width: auto;
             flex: none;
         }
-        .btn-edit { background: linear-gradient(135deg, #3498db, #2980b9) !important; color: white !important; box-shadow: 0 4px 10px rgba(52, 152, 219, 0.2) !important; }
-        .btn-del { background: #e74c3c !important; color: white !important; box-shadow: 0 4px 10px rgba(231, 76, 60, 0.2) !important; }
+        .btn-edit { background: linear-gradient(135deg, #3498db, #2980b9) !important; color: white !important; }
+        .btn-del { background: #e74c3c !important; color: white !important; }
         
         .btn-add-project-container { display: flex; justify-content: center; margin-top: 20px; }
-        .btn-add-project { background: var(--gradient-green); color: white; padding: 12px 35px; border-radius: 10px; font-weight: bold; font-size: 15px; width: auto; flex: none; box-shadow: 0 4px 12px rgba(0, 255, 180, 0.3); }
+        .btn-add-project { background: linear-gradient(135deg, #00b09b, #96c93d); color: white; padding: 12px 35px; border-radius: 10px; font-weight: bold; font-size: 15px; width: auto; flex: none; box-shadow: 0 4px 12px rgba(0, 255, 180, 0.3); }
 
-        /* واجهة المشروع الداخلية والتبويبات المنسدلة المحدثة بالكامل */
-        #single-project-view { display: none; }
+        /* 💎 التبويبات المنسدلة النظيفة والمنفصلة وبدون حواف - مطابقة للصورة والمحاذاة اليمينية */
+        #single-project-view { display: none; width: 100%; }
         .project-inner-header { border-bottom: 2px dashed #444; margin-bottom: 25px; padding-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
-        body.light-mode .project-inner-header { border-bottom-color: #bdc1c6; }
         
-        .accordion-item { border: 1px solid #3a3f4d; border-radius: 10px; margin-bottom: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
-        .accordion-header { background: #282c34; padding: 15px 20px; font-size: 15px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; cursor: pointer; user-select: none; transition: 0.3s; color: #e0e0e0; }
+        .accordion-item { 
+            border: none; 
+            border-radius: 14px; 
+            margin-bottom: 16px; 
+            overflow: hidden; 
+            background: #282c34;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.25); 
+            transition: all 0.3s ease;
+        }
+        .accordion-header { 
+            background: #282c34; 
+            padding: 18px 24px; 
+            font-size: 14px; 
+            font-weight: bold; 
+            display: flex; 
+            flex-direction: row-reverse; 
+            justify-content: space-between; 
+            align-items: center; 
+            cursor: pointer; 
+            user-select: none; 
+            transition: all 0.3s ease; 
+            color: #e0e0e0; 
+            text-align: right;
+        }
         .accordion-header:hover { background: #343a40; }
-        .accordion-header::before { content: "▼"; font-size: 12px; color: #2193b0; transition: 0.3s; margin-left: 10px; order: 2; }
-        .accordion-item.active .accordion-header::before { transform: rotate(180deg); }
-        .accordion-item.active .accordion-header { background: linear-gradient(135deg, #2193b0, #6dd5ed); color: white; }
-        body.light-mode .accordion-item.active .accordion-header { background: linear-gradient(135deg, #2193b0, #6dd5ed); color: white; }
-        .accordion-content { display: none; padding: 20px; background: rgba(30, 34, 42, 0.4); border-top: 1px solid #3a3f4d; }
+        
+        /* أيقونة السهم الجانبي المستقرة في اليسار بدقة */
+        .accordion-header::before { 
+            content: "\f107"; 
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            font-size: 16px; 
+            color: #aaaaaa; 
+            transition: 0.3s; 
+        }
+        .accordion-item.active .accordion-header::before { 
+            transform: rotate(180deg); 
+            color: #2193b0;
+        }
+        
+        .accordion-item.active .accordion-header { 
+            background: rgba(33, 147, 176, 0.1); 
+            color: #6dd5ed; 
+        }
+        .accordion-content { 
+            display: none; 
+            padding: 24px; 
+            background: rgba(30, 34, 42, 0.6); 
+            border-top: 1px dashed rgba(255, 255, 255, 0.05); 
+        }
         .accordion-item.active .accordion-content { display: block; }
 
         /* ستايل لوحة التحكم والحقول الداخلية */
@@ -255,29 +339,103 @@
         .input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         @media (max-width: 600px) { .input-grid { grid-template-columns: 1fr; } }
         .input-group { display: flex; flex-direction: column; }
-        label { font-weight: bold; margin-bottom: 6px; font-size: 13px; color: #6dd5ed; }
-        input, select { padding: 10px; border: 1px solid #444; border-radius: 8px; transition: 0.3s; font-size: 13px; box-sizing: border-box; width: 100%; background-color: #1d1f27; color: white; }
-        input:focus, select:focus { border-color: #6dd5ed; outline: none; }
+        label { font-weight: bold; margin-bottom: 6px; font-size: 13px; color: #6dd5ed; text-align: right; }
+        input, select, textarea { padding: 10px; border: 1px solid #444; border-radius: 8px; transition: 0.3s; font-size: 13px; box-sizing: border-box; width: 100%; background-color: #1d1f27; color: white; margin: 6px 0; text-align: right; }
+        input:focus, select:focus, textarea:focus { border-color: #6dd5ed; outline: none; }
 
         .actions { margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap; }
         .actions button { flex: 1; margin: 0; }
         
         .btn-calc { background: linear-gradient(135deg, #3498db, #2980b9); box-shadow: 0 4px 12px rgba(52, 152, 219, 0.2); }
-        .btn-save { background: var(--gradient-green); box-shadow: 0 4px 12px rgba(0, 255, 180, 0.2); }
+        .btn-save { background: linear-gradient(135deg, #00b09b, #96c93d); box-shadow: 0 4px 12px rgba(0, 255, 180, 0.2); }
         .btn-update { background: linear-gradient(135deg, #f1c40f, #f39c12); color: #111; box-shadow: 0 4px 12px rgba(241, 196, 15, 0.2); }
 
-        .result-box { margin-top: 20px; padding: 15px; background: rgba(33, 147, 176, 0.15); border-right: 5px solid var(--accent); border-radius: 8px; line-height: 1.7; font-size: 14px; color: #fff; }
-        body.light-mode .result-box { background: #e0f2fe; color: #111; }
-        .table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 10px; border: 1px solid #444; margin-top: 10px; background: #1d1f27; }
-        body.light-mode .table-wrapper { border-color: #dadce0; background: #fff; }
+        .result-box { margin-top: 20px; padding: 15px; background: rgba(33, 147, 176, 0.15); border-right: 5px solid #2193b0; border-radius: 8px; line-height: 1.7; font-size: 14px; color: #fff; text-align: right; }
+        .table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 10px; border: 1px solid #444; margin-top: 10px; background: #1d1f27; width: 100%; }
         
-        table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 750px; background: #1d1f27; }
-        th, td { border: 1px solid #444; padding: 10px; text-align: center; }
-        th { background: #15171e; color: #e0e0e0; font-weight: bold; white-space: nowrap; }
+        table { width: 100%; border-collapse: collapse; font-size: 12px; min-width: 750px; background: #1d1f27; display: table; margin-top: 12px; }
+        th, td { border: 1px solid #444; padding: 10px; text-align: right; white-space: nowrap; }
+        th { background: #15171e; color: #e0e0e0; font-weight: bold; }
         tr:nth-child(even) { background: rgba(255, 255, 255, 0.02); }
-        body.light-mode tr:nth-child(even) { background: #f8fafc; }
         
-        .cost-section { background: rgba(241, 196, 15, 0.1); padding: 20px; border-radius: 12px; margin-top: 20px; display: flex; flex-wrap: wrap; align-items: center; gap: 15px; font-weight: bold; border: 1px solid rgba(241, 196, 15, 0.3); }
+        .cost-section { background: rgba(241, 196, 15, 0.1); padding: 20px; border-radius: 12px; margin-top: 20px; display: flex; flex-wrap: wrap; align-items: center; gap: 15px; font-weight: bold; border: 1px solid rgba(241, 196, 15, 0.3); justify-content: space-between; }
+
+        /* 🆕 واجهة النافذة المنبثقة الفاخرة المدمجة لأسماء المشاريع */
+        .protrack-modal {
+            display: none;
+            position: fixed;
+            z-index: 10005;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-content {
+            background: #282c34;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 25px;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 450px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+            animation: fadeInModal 0.3s ease;
+            text-align: right;
+        }
+        body.light-mode .modal-content {
+            background: #ffffff;
+            border-color: #bdc1c6;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+        .modal-header {
+            margin-bottom: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #6dd5ed;
+        }
+        body.light-mode .modal-header {
+            color: #1a73e8;
+        }
+        .modal-body {
+            margin-bottom: 20px;
+        }
+        .modal-footer {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+        .modal-footer button {
+            margin: 0;
+            padding: 10px 20px;
+        }
+        .btn-cancel {
+            background: #e74c3c !important;
+            box-shadow: 0 4px 12px rgba(231, 76, 60, 0.2) !important;
+            color: #fff;
+        }
+        .btn-cancel:hover {
+            background: #c0392b !important;
+        }
+        
+        @keyframes fadeInModal {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @media (max-width: 768px) {
+            body { padding: 8px; }
+            .container { padding: 15px 12px; margin-top: 45px; }
+            h1 { font-size: 20px; }
+            h2 { font-size: 15px; }
+            h3 { font-size: 13px; }
+            input, select, textarea, button { font-size: 12px; padding: 8px 10px; }
+            table { display: block; overflow-x: auto; white-space: nowrap; }
+            th, td { font-size: 11px; padding: 6px; }
+            .project-card { display: flex !important; flex-direction: row !important; justify-content: space-between !important; align-items: center !important; gap: 6px; }
+        }
 
         @media print { 
             .no-print { display: none !important; } 
@@ -294,6 +452,22 @@
 
 <div id="themeToggleBtn" class="settings-toggle" title="تبديل الوضع (ليلي / نهاري)">
     <i class="fas fa-adjust"></i>
+</div>
+
+<div id="projectModal" class="protrack-modal">
+    <div class="modal-content">
+        <div id="modalTitle" class="modal-header">إضافة مشروع جديد</div>
+        <div class="modal-body">
+            <div class="input-group">
+                <label id="modalLabel"><i class="fas fa-edit"></i> أدخل اسم مشروع الحديد:</label>
+                <input type="text" id="modalProjectNameInput" placeholder="مثال: بناية المنصور التجارية...">
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button id="modalSubmitBtn" class="btn-save" onclick="handleModalSubmit()">حفظ</button>
+            <button class="btn-cancel" onclick="closeProjectModal()">إلغاء</button>
+        </div>
+    </div>
 </div>
 
 <div class="container">
@@ -419,16 +593,22 @@
     let projects = JSON.parse(localStorage.getItem('rebar_dashboard_projects_v4')) || {"مشروع رقم 1": [], "مشروع رقم 2": []};
     let currentProjectName = "";
     
+    let modalMode = "create"; 
+    let oldProjectTargetName = "";
+
     function saveProjects() {
         localStorage.setItem('rebar_dashboard_projects_v4', JSON.stringify(projects));
     }
 
-    // إدارة التبويبات المنسدلة (Accordions)
+    // دالة التحكم بالتبويبات لدعم الغلق التلقائي للبقية عند فتح أي تبويب
     function toggleAccordion(itemId) {
         const item = document.getElementById(itemId);
-        if (item.classList.contains('active')) {
-            item.classList.remove('active');
-        } else {
+        const isActive = item.classList.contains('active');
+        
+        const allItems = document.querySelectorAll('.accordion-item');
+        allItems.forEach(el => el.classList.remove('active'));
+        
+        if (!isActive) {
             item.classList.add('active');
         }
     }
@@ -470,26 +650,64 @@
     }
 
     function createNewProject() {
-        const name = prompt("أدخل اسم مشروع الحديد الجديد:");
-        if (name && !projects[name]) {
-            projects[name] = [];
-            saveProjects();
-            renderDashboard();
-        } else if (projects[name]) {
-            alert("هذا الاسم موجود مسبقاً!");
-        }
+        modalMode = "create";
+        document.getElementById('modalTitle').innerText = "إضافة مشروع جديد";
+        document.getElementById('modalLabel').innerHTML = `<i class="fas fa-edit"></i> أدخل اسم مشروع الحديد الجديد:`;
+        document.getElementById('modalProjectNameInput').value = "";
+        document.getElementById('projectModal').style.display = "flex";
+        document.getElementById('modalProjectNameInput').focus();
     }
 
     function renameProject(oldName) {
-        const newName = prompt(`تعديل اسم المشروع "${oldName}" إلى:`, oldName);
-        if (newName && newName !== oldName) {
-            if (projects[newName]) return alert("هذا الاسم موجود مسبقاً!");
-            projects[newName] = projects[oldName];
-            delete projects[oldName];
-            saveProjects();
-            renderDashboard();
+        modalMode = "rename";
+        oldProjectTargetName = oldName;
+        document.getElementById('modalTitle').innerText = "تعديل اسم المشروع";
+        document.getElementById('modalLabel').innerHTML = `<i class="fas fa-edit"></i> تعديل اسم المشروع "${oldName}" إلى:`;
+        document.getElementById('modalProjectNameInput').value = oldName;
+        document.getElementById('projectModal').style.display = "flex";
+        document.getElementById('modalProjectNameInput').focus();
+    }
+
+    function closeProjectModal() {
+        document.getElementById('projectModal').style.display = "none";
+    }
+
+    function handleModalSubmit() {
+        const name = document.getElementById('modalProjectNameInput').value.trim();
+        
+        if (!name) {
+            alert("الرجاء إدخال اسم مشروع صالح!");
+            return;
+        }
+
+        if (modalMode === "create") {
+            if (!projects[name]) {
+                projects[name] = [];
+                saveProjects();
+                renderDashboard();
+                closeProjectModal();
+            } else if (projects[name]) {
+                alert("هذا الاسم موجود مسبقاً!");
+            }
+        } else if (modalMode === "rename") {
+            if (name !== oldProjectTargetName) {
+                if (projects[name]) return alert("هذا الاسم موجود مسبقاً!");
+                projects[name] = projects[oldProjectTargetName];
+                delete projects[oldProjectTargetName];
+                saveProjects();
+                renderDashboard();
+                closeProjectModal();
+            } else {
+                closeProjectModal();
+            }
         }
     }
+
+    document.getElementById('modalProjectNameInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            handleModalSubmit();
+        }
+    });
 
     function deleteProjectDirect(name) {
         if (confirm(`هل أنت متأكد من حذف مشروع "${name}" وكل بياناته الإنشائية؟`)) {
@@ -505,8 +723,7 @@
         document.getElementById('single-project-view').style.display = 'block';
         document.getElementById('active-project-title').innerHTML = `<i class="fas fa-folder-open" style="color:#2193b0;"></i> ` + name;
         
-        // فتح التبويب الأول افتراضياً وإغلاق البقية عند التحميل
-        document.getElementById('acc-item-calc').classList.add('active');
+        document.getElementById('acc-item-calc').classList.remove('active');
         document.getElementById('acc-item-records').classList.remove('active');
         document.getElementById('acc-item-summary').classList.remove('active');
         
@@ -811,9 +1028,7 @@
         saveProjects();
         renderAll();
         
-        // فتح تبويب السجلات تلقائياً بعد الحفظ ليرى المستخدم العنصر المحفوظ
-        document.getElementById('acc-item-calc').classList.remove('active');
-        document.getElementById('acc-item-records').classList.add('active');
+        toggleAccordion('acc-item-records');
     }
 
     function editItem(index) {
@@ -842,9 +1057,7 @@
         
         calculate(); 
 
-        // الانتقال لتبويب الحسابات وتفعيله
-        document.getElementById('acc-item-records').classList.remove('active');
-        document.getElementById('acc-item-calc').classList.add('active');
+        toggleAccordion('acc-item-calc');
         document.getElementById('acc-item-calc').scrollIntoView({ behavior: 'smooth' });
     }
 
@@ -933,7 +1146,6 @@
         document.getElementById('total-cost-display').innerText = `التكلفة الكلية المقدرة: ${cost.toLocaleString(undefined, {maximumFractionDigits: 0})} دينار عراقي`;
     }
 
-    // تهيئة ميزة وضع الحضور النهاري/الليلي المتطابقة بالكامل
     document.addEventListener('DOMContentLoaded', () => {
         const themeToggleBtn = document.getElementById('themeToggleBtn');
         const currentTheme = localStorage.getItem("protrack_rebar_theme");
@@ -950,7 +1162,6 @@
         }
     });
 
-    // تشغيل الأكواد لأول مرة
     renderDashboard();
     updateForm();
 </script>

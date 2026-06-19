@@ -749,21 +749,21 @@
 
     const forms = {
         slab: [
-            {id: 'L', label: 'الطول في اتجاه الفرش (م)', val: 10}, {id: 'W', label: 'العرض في اتجاه الغطاء (م)', val: 5},
+            {id: 'L', label: 'الطول (م)', val: 10}, {id: 'W', label: 'العرض (م)', val: 5},
             {id: 'thick', label: 'سمك السقف (سم)', val: 20},
             {id: 'layer_type', label: 'نوع التسليح', val: 2, type: 'select', options: [{v: 1, t: 'شبكة مفردة (Single Layer)'}, {v: 2, t: 'شبكة مزدوجة (Top & Bottom)'}]},
-            {id: 'dia_x', label: 'قطر حديد الفرش (مم)', val: 12}, {id: 'space_x', label: 'المسافة بين الفرش (سم)', val: 20},
-            {id: 'dia_y', label: 'قطر حديد الغطاء (مم)', val: 12}, {id: 'space_y', label: 'المسافة بين الغطاء (سم)', val: 20},
-            {id: 'hook', label: 'طول الهوك (سم)', val: 10}, {id: 'cover', label: 'الغطاء الخرساني (مم)', val: 20},
+            {id: 'dia_x', label: 'قطر الشيش (مم)', val: 12}, {id: 'space_x', label: 'المسافة بين الشيش (سم)', val: 20},
+            {id: 'chair_dia', label: 'قطر شيش الكراسي (مم)', val: 12},
+            {id: 'cover', label: 'الغطاء الخرساني (مم)', val: 20},
             {id: 'waste', label: 'نسبة الهالك (%)', val: 5}, {id: 'qty', label: 'عدد الأسقف المتطابقة', val: 1}
         ],
         raft: [
-            {id: 'L', label: 'الطول في اتجاه الفرش (م)', val: 20}, {id: 'W', label: 'العرض في اتجاه الغطاء (م)', val: 15},
+            {id: 'L', label: 'الطول (م)', val: 20}, {id: 'W', label: 'العرض (م)', val: 15},
             {id: 'thick', label: 'سمك اللبشة / الـ Raft (سم)', val: 80},
             {id: 'layer_type', label: 'نوع التسليح', val: 2, type: 'select', options: [{v: 2, t: 'شبكة مزدوجة علوية وسفلية'}, {v: 1, t: 'شبكة مفردة ثقيلة'}]},
-            {id: 'dia_x', label: 'قطر حديد الفرش (مم)', val: 16}, {id: 'space_x', label: 'المسافة بين الفرش (سم)', val: 15},
-            {id: 'dia_y', label: 'قطر حديد الغطاء (مم)', val: 16}, {id: 'space_y', label: 'المسافة بين الغطاء (سم)', val: 15},
-            {id: 'hook', label: 'طول الهوك (سم)', val: 15}, {id: 'cover', label: 'الغطاء الخرساني (مم)', val: 75},
+            {id: 'dia_x', label: 'قطر الشيش (مم)', val: 16}, {id: 'space_x', label: 'المسافة بين الشيش (سم)', val: 15},
+            {id: 'chair_dia', label: 'قطر شيش الكراسي (مم)', val: 14},
+            {id: 'cover', label: 'الغطاء الخرساني (مم)', val: 75},
             {id: 'waste', label: 'نسبة الهالك (%)', val: 5}, {id: 'qty', label: 'العدد', val: 1}
         ],
         beam: [
@@ -838,40 +838,48 @@
         if (type === 'slab' || type === 'raft') {
             let l = getV('L'), w = getV('W'), thick = getV('thick')/100;
             let diaX = getV('dia_x'), spX = getV('space_x')/100;
-            let diaY = getV('dia_y'), spY = getV('space_y')/100;
-            let cov = getV('cover')/1000, hook = getV('hook') / 100;
+            let chairDia = getV('chair_dia');
+            let cov = getV('cover')/1000;
             let layers = getV('layer_type') || 2; 
             
-            let realL = addOverlap(l, diaX);
-            let realW = addOverlap(w, diaY);
+            // حساب الهوك بناءً على قطر الشيش (12 مرة من القطر للطرف الواحد)
+            let hookX = (12 * diaX) / 1000;
 
-            let lenX = (realL - 2*cov) + 2*hook; 
-            let numX = Math.floor(w / spX) + 1;
+            // تطبيق شرط تداخل الأوفر لاب التلقائي لكل اتجاه على حدة
+            let realL = addOverlap(l, diaX);
+            let realW = addOverlap(w, diaX);
+
+            // طول خط السيخ بالكامل شاملاً الهوك والكفر
+            let lenX = (realL - 2*cov) + 2*hookX; 
+            let numX = Math.floor(w / spX) + 1; // إضافة سيخ البادي (+1)
             let weightX = (lenX * numX) * layers * (Math.pow(diaX, 2) / 162);
             addWeight(diaX, weightX * (1 + wst));
             detectedCuts.push({ dia: diaX, length: lenX, count: numX * layers * totalQty });
 
-            let lenY = (realW - 2*cov) + 2*hook; 
-            let numY = Math.floor(l / spY) + 1;
-            let weightY = (lenY * numY) * layers * (Math.pow(diaY, 2) / 162);
-            addWeight(diaY, weightY * (1 + wst));
-            detectedCuts.push({ dia: diaY, length: lenY, count: numY * layers * totalQty });
+            let lenY = (realW - 2*cov) + 2*hookX; 
+            let numY = Math.floor(l / spX) + 1; // إضافة سيخ البادي (+1)
+            let weightY = (lenY * numY) * layers * (Math.pow(diaX, 2) / 162);
+            addWeight(diaX, weightY * (1 + wst));
+            detectedCuts.push({ dia: diaX, length: lenY, count: numY * layers * totalQty });
 
             let chairCount = 0;
+            let chairLen = 0;
             if (layers === 2) {
-                let chairH = thick - (2*cov) - ((2*diaX + 2*diaY)/1000); 
+                // حساب ارتفاع الكرسي هندسياً = السمك الإجمالي - غطاءين - قطري شبكة التسليح
+                let chairH = thick - (2*cov) - ((2*diaX)/1000); 
                 if (chairH > 0) {
-                    let chairLen = (chairH * 2) + 0.35; 
-                    // 🆕 تحديث حساب عدد الكراسي بدقة بناءً على مسافة التوزيع الافتراضية (1.2 متر طولاً وعرضاً)
+                    // طول سيخ الكرسي الكلي = (ارتفاعين) + (قمة الكرسي 25سم) + (رجلين سفليتين للتثبيت 10سم للواحدة)
+                    chairLen = (chairH * 2) + 0.25 + 0.20; 
+                    // حساب التوزيع الافتراضي المعتمد (كل 1.2 متر طولي وعرضي كرسي واحد)
                     chairCount = Math.ceil(l / 1.2) * Math.ceil(w / 1.2); 
                     let chairTotalLen = chairCount * chairLen;
-                    let chairW = chairTotalLen * (Math.pow(12, 2) / 162); 
-                    addWeight(12, chairW * (1 + wst));
-                    detectedCuts.push({ dia: 12, length: chairLen, count: chairCount * totalQty });
+                    let chairW = chairTotalLen * (Math.pow(chairDia, 2) / 162); 
+                    addWeight(chairDia, chairW * (1 + wst));
+                    detectedCuts.push({ dia: chairDia, length: chairLen, count: chairCount * totalQty });
                 }
             }
             
-            infoText = `<i class="fas fa-hammer"></i> <strong>العدد الإجمالي المتوقع للكراسي الإنشائية:</strong> ${chairCount * totalQty} كرسي (بقطر 12 مم وتوزيع 1.2م).<br>`;
+            infoText = `<i class="fas fa-hammer"></i> <strong>العدد الإجمالي المتوقع للكراسي:</strong> ${chairCount * totalQty} كرسي (بقطر ${chairDia} مم).<br>📏 <strong>طول السيخ المفروض للكرسي الواحد:</strong> ${chairLen.toFixed(2)} متر.<br>`;
         } 
         else if (type === 'beam') {
             let l = getV('L'), count = getV('count'), dia = getV('dia');
@@ -1148,7 +1156,7 @@
     }
 
     function deleteItem(index) { 
-        if(confirm("هل أنت متأكد من حذف هذا العنصر الإنشائي؟")) {
+        if(confirm("هل أنت متأكد من حذف هذا العنصر الإنشائية؟")) {
             projects[currentProjectName].splice(index, 1); saveProjects(); renderAll();
             if (parseInt(document.getElementById('edit-index').value) == index) cancelEdit();
         }
